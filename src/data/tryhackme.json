@@ -1,0 +1,317 @@
+{
+  "profile": {
+    "username": "Oscar.Senior",
+    "profileUrl": "https://tryhackme.com/p/Oscar.Senior",
+    "lastUpdated": "2026-09-20"
+  },
+  "stats": {
+    "totalBadges": 22,
+    "totalRoomsCompleted": 156,
+    "commonBadges": 12,
+    "rareBadges": 6,
+    "epicBadges": 4
+  },
+  "badges": {
+    "epic": [
+      {
+        "id": "673dac718ac33c9ca997e2e0",
+        "name": "authentication-striker",
+        "title": "Authentication Striker",
+        "description": "Used the Hammer to bypass authentication",
+        "rarity": "epic",
+        "rarityPercent": 0.8,
+        "image": "https://assets.tryhackme.com/img/badges/authentication.png"
+      },
+      {
+        "id": "673dac718ac33c9ca997e348",
+        "name": "sql-slayer",
+        "title": "SQL Slayer",
+        "description": "Conquered Advanced SQL Injection",
+        "rarity": "epic",
+        "rarityPercent": 0.9,
+        "image": "https://assets.tryhackme.com/img/badges/injection.png"
+      },
+      {
+        "id": "673dac718ac33c9ca997e3c4",
+        "name": "system-sniffer",
+        "title": "System Sniffer",
+        "description": "Completed the File Path traversal room",
+        "rarity": "epic",
+        "rarityPercent": 0.6,
+        "image": "https://assets.tryhackme.com/img/badges/serversideattack.png"
+      },
+      {
+        "id": "66a0e6bb6149ee4eb8ea1731",
+        "name": "handle-the-disgruntled",
+        "title": "Handle the Disgruntled",
+        "description": "Finishing the Disgruntled challenge!",
+        "rarity": "epic",
+        "rarityPercent": 0.9,
+        "image": "https://assets.tryhackme.com/img/badges/digitalforensicsandincidentresponse.png"
+      }
+    ],
+    "rare": [
+      {
+        "id": "5caa74b7ea5ebc64acc86527",
+        "name": "hash-cracker",
+        "title": "Hash Cracker",
+        "description": "Cracking all those hashes",
+        "rarity": "rare",
+        "rarityPercent": 8.5,
+        "image": "https://assets.tryhackme.com/img/badges/hashcracker.png"
+      },
+      {
+        "id": "615adcd2437056aee264b254",
+        "name": "intro-to-web-hacking",
+        "title": "Intro to Web Hacking",
+        "description": "Completing the 'Introduction to Web Hacking' module",
+        "rarity": "rare",
+        "rarityPercent": 8.9,
+        "image": "https://assets.tryhackme.com/img/badges/introtowebsecurity.png"
+      },
+      {
+        "id": "5cab1e25ea5ebc64acc98c57",
+        "name": "burped",
+        "title": "Burp'ed",
+        "description": "Completing the Burp Suite module",
+        "rarity": "rare",
+        "rarityPercent": 9.2,
+        "image": "https://assets.tryhackme.com/img/badges/burpsuite.png"
+      },
+      {
+        "id": "6710f453b3eec466f102ee2d",
+        "name": "careerreadybadge",
+        "title": "Cyber Ready",
+        "description": "Understanding impact of training on teams",
+        "rarity": "rare",
+        "rarityPercent": 4.7,
+        "image": "https://assets.tryhackme.com/img/badges/careerready.png"
+      },
+      {
+        "id": "62bc8cda437056aee2f1f85e",
+        "name": "adversary",
+        "title": "ADversary",
+        "description": "Completing all Active Directory networks",
+        "rarity": "rare",
+        "rarityPercent": 1.2,
+        "image": "https://assets.tryhackme.com/img/badges/attackingad.png"
+      }
+    ],
+    "common": [
+      {
+        "id": "636ac6a866638c250cce701f",
+        "name": "first-4-rooms",
+        "title": "First Four",
+        "description": "Completing four rooms in your first week of joining!",
+        "rarity": "common",
+        "rarityPercent": 30.4,
+        "image": "https://assets.tryhackme.com/img/badges/firstfour.png"
+      },
+      {
+        "id": "60cf505d437056aee2cf0de3",
+        "name": "network-fundamentals",
+        "title": "Networking Nerd",
+        "description": "Completing the 'Network Fundamentals' module",
+        "rarity": "common",
+        "rarityPercent": 23.8,
+        "image": "https://assets.tryhackme.com/img/badges/networkfundamentals.png"
+      },
+      {
+        "id": "5e6830ca7095e6fb1e9f0520",
+        "name": "web-fund",
+        "title": "Webbed",
+        "description": "Understands how the world wide web works",
+        "rarity": "common",
+        "rarityPercent": 31.8,
+        "image": "https://assets.tryhackme.com/img/badges/webbed.png"
+      },
+      {
+        "id": "609bbc16a2323e2d0e95e057",
+        "name": "world-wide-web",
+        "title": "World Wide Web",
+        "description": "Completing the 'How The Web Works' module",
+        "rarity": "common",
+        "rarityPercent": 25.8,
+        "image": "https://assets.tryhackme.com/img/badges/howthewebworks.png"
+      },
+      {
+        "id": "5dcee81690735abace1e4208",
+        "name": "terminaled",
+        "title": "cat linux.txt",
+        "description": "Being competent in Linux",
+        "rarity": "common",
+        "rarityPercent": 51.2,
+        "image": "https://assets.tryhackme.com/img/badges/linux.png"
+      },
+      {
+        "id": "61376c68437056aee26244af",
+        "name": "intro-to-pentesting",
+        "title": "Pentesting Principles",
+        "description": "Completing the 'Introduction to Pentesting' module",
+        "rarity": "common",
+        "rarityPercent": 18.2,
+        "image": "https://assets.tryhackme.com/img/badges/introtooffensivesecurity.png"
+      },
+      {
+        "id": "5f1b30268b57fa13a65e3508",
+        "name": "owasp-10",
+        "title": "OWASP Top 10",
+        "description": "Understanding every OWASP vulnerability",
+        "rarity": "common",
+        "rarityPercent": 13.0,
+        "image": "https://assets.tryhackme.com/img/badges/owasptop10.png"
+      },
+      {
+        "id": "5dcef93e90735abace1ee526",
+        "name": "metasploitable",
+        "title": "Metasploitable",
+        "description": "Contains the knowledge to use Metasploit",
+        "rarity": "common",
+        "rarityPercent": 12.2,
+        "image": "https://assets.tryhackme.com/img/badges/metasploit.png"
+      },
+      {
+        "id": "5de2514490735abaceb31f8a",
+        "name": "blue",
+        "title": "Blue",
+        "description": "Hacking into Windows via EternalBlue",
+        "rarity": "common",
+        "rarityPercent": 12.8,
+        "image": "https://assets.tryhackme.com/img/badges/blue.png"
+      }
+    ]
+  },
+  "completedRooms": {
+    "totalCompleted": 156,
+    "sampleFirst16": [
+      {
+        "title": "Ra",
+        "code": "ra",
+        "difficulty": "hard",
+        "type": "challenge",
+        "technologyTags": ["Red teaming", "Penetration testing"]
+      },
+      {
+        "title": "Linux Fundamentals Part 1",
+        "code": "linuxfundamentalspart1",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Linux", "Penetration testing", "File system navigation"]
+      },
+      {
+        "title": "Linux Fundamentals Part 2",
+        "code": "linuxfundamentalspart2",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Linux", "Penetration testing", "File system navigation"]
+      },
+      {
+        "title": "How Websites Work",
+        "code": "howwebsiteswork",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Web", "Security analysis"]
+      },
+      {
+        "title": "Linux Fundamentals Part 3",
+        "code": "linuxfundamentalspart3",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Linux", "Penetration testing", "File system navigation", "Logging"]
+      },
+      {
+        "title": "Putting it all together",
+        "code": "puttingitalltogether",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Web", "Application security engineering"]
+      },
+      {
+        "title": "DNS in Detail",
+        "code": "dnsindetail",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Linux", "Security analysis", "Security operations"]
+      },
+      {
+        "title": "HTTP in Detail",
+        "code": "httpindetail",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Web", "Burp Suite", "Security analysis", "Security operations"]
+      },
+      {
+        "title": "Windows Fundamentals 1",
+        "code": "windowsfundamentals1xbx",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Windows", "Wireshark", "Exploitation", "File system navigation", "Security analysis"]
+      },
+      {
+        "title": "What is Networking?",
+        "code": "whatisnetworking",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Network troubleshooting"]
+      },
+      {
+        "title": "Intro to LAN",
+        "code": "introtolan",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Security analysis"]
+      },
+      {
+        "title": "Packets & Frames",
+        "code": "packetsframes",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Windows", "Linux", "MacOs", "Security analysis", "Network security engineering", "Network monitoring"]
+      },
+      {
+        "title": "Extending Your Network",
+        "code": "extendingyournetwork",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Network security engineering"]
+      },
+      {
+        "title": "Offensive Security Intro",
+        "code": "offensivesecurityintro",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Web", "Gobuster", "Penetration testing", "Red teaming", "Application penetration testing"]
+      },
+      {
+        "title": "Defensive Security Intro",
+        "code": "defensivesecurityintro",
+        "difficulty": "easy",
+        "type": "walkthrough",
+        "technologyTags": ["Windows", "Security operations", "Security analysis", "Incident response"]
+      },
+      {
+        "title": "Careers in Cyber",
+        "code": "careersincyber",
+        "difficulty": "info",
+        "type": "walkthrough",
+        "technologyTags": ["Linux", "Splunk", "Wireshark", "Metasploit Framework", "Security operations", "Malware analysis", "Red teaming", "Incident response"]
+      }
+    ]
+  },
+  "skillsCovered": {
+    "linux": ["Linux Fundamentals Part 1", "Linux Fundamentals Part 2", "Linux Fundamentals Part 3"],
+    "networking": ["What is Networking?", "Intro to LAN", "Packets & Frames", "Extending Your Network", "DNS in Detail"],
+    "webSecurity": ["How Websites Work", "Putting it all together", "HTTP in Detail", "Intro to Web Hacking"],
+    "penetrationTesting": ["Pentesting Principles", "Offensive Security Intro", "Burp Suite", "OWASP Top 10"],
+    "windowsSecurity": ["Windows Fundamentals 1", "Blue (EternalBlue)"],
+    "activeDirectory": ["ADversary badge - Completing all Active Directory networks"],
+    "authentication": ["Authentication Striker badge - Advanced authentication bypass"],
+    "injection": ["SQL Slayer badge - Advanced SQL Injection"],
+    "forensics": ["Handle the Disgruntled badge - Digital Forensics and Incident Response"]
+  },
+  "progressMetrics": {
+    "epicBadgeRarity": "Top 1% of users (0.6%-0.9% rarity)",
+    "description": "22 badges earned across common, rare, and epic tiers demonstrates progression from foundational knowledge (First Four, Linux Fundamentals) through intermediate security concepts (OWASP, Burp Suite) to advanced techniques (SQL Injection, Authentication Bypass, Active Directory)",
+    "profileUrl": "https://tryhackme.com/p/Oscar.Senior"
+  }
+}

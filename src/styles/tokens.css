@@ -1,0 +1,61 @@
+/* Design Tokens — All pages/components reference these */
+
+:root {
+  /* Colors — dark app shell, neutral cream accents (ref: FEEDBACK app UI) */
+  --color-bg: #0b0b0d;
+  --color-bg-raised: #131316;
+  --color-text-primary: #ede9e0;
+  --color-text-secondary: #8f8f96;
+  --color-text-tertiary: #5c5c62;
+  --color-accent-danger: #860e27;
+  --color-accent-interactive: #ff2a3a;
+  --color-accent-tag: #ff4550; /* WCAG AA-compliant on translucent tag backgrounds; #ff2a3a falls to 4.28:1 there */
+  --color-border: #232326;
+  --color-border-strong: #333338;
+  --color-surface: #131316;
+  --color-cream: #ede9e0;
+  --color-cream-text: #0b0b0d;
+
+  /* Layout */
+  --sidebar-width: 240px;
+
+  /* Typography */
+  --font-display: 'Archivo Expanded', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Motion */
+  --transition-fast: 0.1s ease-in-out;
+  --transition-safe: 0.2s ease-in-out;
+  --transition-slow: 0.3s ease-in-out;
+
+  /* Z-Index */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-modal: 1000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

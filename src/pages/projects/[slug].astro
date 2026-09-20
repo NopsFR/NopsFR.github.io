@@ -1,0 +1,289 @@
+---
+// src/pages/projects/[slug].astro
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+
+export async function getStaticPaths() {
+  const allProjects = await getCollection('projects');
+  return allProjects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+---
+
+<Layout title={data.title} description={data.description}>
+  <article class="project-detail">
+    <header class="project-header">
+      <div class="title-row">
+        {data.logo && <img src={data.logo} alt="" class="project-logo" width="40" height="40" />}
+        <h1>{data.title}</h1>
+        <StatusBadge status={data.status} />
+      </div>
+      <p class="tagline">{data.description}</p>
+      <div class="meta-row">
+        <span class="meta-tag">{data.projectType}</span>
+        <span class="meta-tag">{data.year}</span>
+      </div>
+      {
+        data.links && (
+          <div class="links-row">
+            {data.links.live && (
+              <a href={data.links.live} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                Live Demo
+              </a>
+            )}
+            {data.links.github && (
+              <a href={data.links.github} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                GitHub
+              </a>
+            )}
+            {data.links.documentation && (
+              <a href={data.links.documentation} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                Docs
+              </a>
+            )}
+          </div>
+        )
+      }
+    </header>
+
+    <section class="tech-section">
+      <h2>Technology Stack</h2>
+      {
+        Object.entries(data.technologies).map(([category, techs]) => (
+          <div class="tech-group">
+            <h3>{category}</h3>
+            <div class="tech-tags">
+              {techs.map((tech) => (
+                <span class="tech-tag">{tech}</span>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="competencies-section">
+      <h2>Competencies</h2>
+      <ul class="competency-list">
+        {data.competencies.map((c) => <li>{c}</li>)}
+      </ul>
+    </section>
+
+    {
+      data.timeline && data.timeline.length > 0 && (
+        <section class="timeline-section">
+          <h2>Timeline</h2>
+          <ol class="timeline">
+            {data.timeline.map((entry) => (
+              <li>
+                <span class="timeline-date">{entry.date}</span>
+                <span class="timeline-event">{entry.event}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    {
+      data.metrics && (
+        <section class="metrics-section">
+          <h2>Metrics</h2>
+          <dl class="metrics-grid">
+            {Object.entries(data.metrics).map(([key, value]) => (
+              <div class="metric">
+                <dt>{key}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    {
+      data.recognition && data.recognition.length > 0 && (
+        <section class="recognition-section">
+          <h2>Recognition</h2>
+          <ul>
+            {data.recognition.map((r) => (
+              <li>{r}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="content-section">
+      <Content />
+    </section>
+
+    <p class="back-link">
+      <a href={`${import.meta.env.BASE_URL}projects`}>← All projects</a>
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .project-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8) var(--space-16);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .title-row h1 {
+    margin: 0;
+  }
+
+  .project-logo {
+    border-radius: 0.375rem;
+    object-fit: cover;
+  }
+
+  .tagline {
+    color: var(--color-text-secondary);
+    font-size: var(--text-lg);
+    margin: var(--space-4) 0;
+  }
+
+  .meta-row,
+  .links-row {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-4);
+  }
+
+  .meta-tag {
+    padding: var(--space-1) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+
+
+  section {
+    margin-top: var(--space-12);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-2);
+  }
+
+  .tech-group {
+    margin-bottom: var(--space-4);
+  }
+
+  .tech-group h3 {
+    font-size: var(--text-sm);
+    text-transform: capitalize;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
+
+  .tech-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .tech-tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-4);
+    background: rgba(255, 42, 58, 0.1);
+    border: 1px solid var(--color-accent-interactive);
+    border-radius: 1rem;
+    font-size: var(--text-xs);
+    color: var(--color-accent-tag);
+  }
+
+  .competency-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-2) var(--space-6);
+    padding-left: var(--space-6);
+    color: var(--color-text-secondary);
+  }
+
+  .timeline {
+    list-style: none;
+    padding: 0;
+    border-left: 2px solid var(--color-border);
+  }
+
+  .timeline li {
+    padding: 0 0 var(--space-4) var(--space-6);
+    position: relative;
+  }
+
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent-interactive);
+  }
+
+  .timeline-date {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent-interactive);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .metric {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: var(--space-4);
+  }
+
+  .metric dt {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    text-transform: capitalize;
+  }
+
+  .metric dd {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-family: var(--font-mono);
+  }
+
+  .content-section :global(h2) {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .back-link {
+    margin-top: var(--space-16);
+  }
+</style>

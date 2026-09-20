@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nopsfr.github.io/oscar-portfolio/sitemap.xml
