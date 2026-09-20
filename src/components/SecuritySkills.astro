@@ -1,0 +1,128 @@
+---
+// src/components/SecuritySkills.astro
+// Computed from two real sources, not hand-typed:
+// 1. TryHackMe's own technologyTags on completed rooms (topics covered, mostly
+//    Info/Easy/foundational difficulty — this is breadth of exposure, not a
+//    claim of mastery)
+// 2. Security-relevant competencies already verified in the project content
+//    collection (auth, rate limiting, audit logging, etc.)
+import { getCollection } from 'astro:content';
+import tryhackme from '../data/tryhackme.json';
+
+const projects = await getCollection('projects');
+
+const roomTagCounts = new Map<string, number>();
+for (const room of tryhackme.completedRooms.sampleFirst16) {
+  for (const tag of room.technologyTags) {
+    roomTagCounts.set(tag, (roomTagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const categories: Record<string, string[]> = {
+  'Offensive security (TryHackMe)': ['Red teaming', 'Penetration testing', 'Application penetration testing', 'Exploitation', 'Burp Suite', 'Gobuster', 'Metasploit Framework'],
+  'Infrastructure & network (TryHackMe)': ['Linux', 'Windows', 'Network security engineering', 'Network troubleshooting', 'Network monitoring', 'File system navigation'],
+  'Defensive & analysis (TryHackMe)': ['Security analysis', 'Security operations', 'Incident response', 'Malware analysis', 'Wireshark', 'Splunk', 'Logging'],
+};
+
+const projectSecurityCompetencies = [...new Set(
+  projects.flatMap((p) => p.data.competencies).filter((c) =>
+    /auth|security|2fa|totp|rate limit|helmet|hardening|audit|role-based|moderation/i.test(c)
+  )
+)];
+
+function tierLabel(count: number) {
+  if (count >= 4) return { label: 'Practiced', color: 'var(--color-tier-core)' };
+  if (count >= 2) return { label: 'Introduced', color: 'var(--color-tier-learning)' };
+  return { label: 'Exposure', color: 'var(--color-tier-foundation)' };
+}
+---
+
+<div class="security-skills">
+  {
+    Object.entries(categories).map(([label, tags]) => {
+      const present = tags.filter((t) => roomTagCounts.has(t));
+      if (present.length === 0) return null;
+      return (
+        <div class="tier">
+          <h3>{label}</h3>
+          <div class="tag-row">
+            {present.map((t) => {
+              const { label: tierName, color } = tierLabel(roomTagCounts.get(t)!);
+              return (
+                <span class="tag" style={`--tag-color: ${color}`} title={`${tierName} — ${roomTagCounts.get(t)} completed room(s) tagged in the sample data`}>
+                  {t}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      );
+    })
+  }
+
+  <div class="tier">
+    <h3>Applied in projects</h3>
+    <p class="tier-note">Real, verified security work already shipped in the projects above — not TryHackMe rooms.</p>
+    <div class="tag-row">
+      {projectSecurityCompetencies.map((c) => <span class="tag tag-applied">{c}</span>)}
+    </div>
+  </div>
+
+  <p class="methodology-note">
+    The TryHackMe categories above are computed from the technology tags TryHackMe itself attaches to completed
+    rooms in the profile data — they reflect topics covered (mostly Info/Easy difficulty introductory rooms), not a
+    claim of independent operational mastery. Tier = how many completed rooms (in the available sample) touched
+    that tag.
+  </p>
+</div>
+
+<style>
+  .security-skills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .tier h3 {
+    font-size: var(--text-base);
+    margin: 0 0 var(--space-2);
+  }
+
+  .tier-note {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    margin: 0 0 var(--space-4);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    border: 1px solid var(--tag-color, var(--color-border-strong));
+    color: var(--tag-color, var(--color-text-secondary));
+    background: var(--color-bg-raised);
+    cursor: help;
+  }
+
+  .tag-applied {
+    border-color: var(--color-accent-secondary);
+    color: var(--color-accent-secondary);
+  }
+
+  .methodology-note {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    line-height: 1.6;
+    max-width: 640px;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+  }
+</style>

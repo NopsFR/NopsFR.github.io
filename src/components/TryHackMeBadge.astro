@@ -12,7 +12,7 @@ const { title, description, rarity, rarityPercent, image } = Astro.props;
 ---
 
 <div class={`badge badge-${rarity}`}>
-  <img src={image} alt="" loading="lazy" width="48" height="48" />
+  <img src={image} alt="" loading="lazy" width="48" height="56" />
   <div class="badge-body">
     <p class="badge-title">{title}</p>
     <p class="badge-description">{description}</p>
