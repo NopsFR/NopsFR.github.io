@@ -1,32 +1,130 @@
 ---
 // src/pages/about.astro
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import Skills from '../components/Skills.astro';
+
+const projects = await getCollection('projects');
+const base = import.meta.env.BASE_URL;
 ---
 
-<Layout title="About" description="About Oscar — cybersecurity apprenticeship candidate.">
+<Layout title="About" description="About Oscar — final-year cybersecurity/IT student, DISC, building a hands-on technical portfolio while applying for apprenticeships.">
   <section class="about-content">
     <h1>About</h1>
+
+    <div class="lede">
+      <p>
+        I'm a final-year student at DISC, specialising in cybersecurity and IT, and I'm looking for a paid
+        cybersecurity apprenticeship, IT apprenticeship, or junior technical role.
+      </p>
+    </div>
+
+    <h2>What I build</h2>
     <p>
-      Final-year Cybersecurity/IT student building production systems: Discord platforms, SaaS marketplaces,
-      Rust-based bots, and a self-hosted security lab. Actively practising offensive and defensive security on
-      TryHackMe, and applying for a cybersecurity apprenticeship.
+      I learn by building. Every project on this site started from a real problem or a specific thing I wanted to
+      understand — Discord platforms with real auth and payment flows, a Rust/Tauri desktop app, SaaS backends with
+      Prisma and Stripe, and a Fastify-backed security-training simulator. {projects.length} projects total, all
+      audited against their own source code rather than described from memory — see <a href={`${base}projects`}>Projects</a>.
     </p>
+
+    <h2>How I got here</h2>
     <p>
-      Get in touch via <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">GitHub</a>.
+      I manage an EHCP (Education, Health and Care Plan) accommodation alongside my studies. In practice that means
+      I've had to be deliberate about how I work — breaking problems down, documenting as I go, and building things
+      end-to-end rather than half-finishing them. I think that shows up in the projects themselves: most of what's
+      here has real error handling, real docs, and a real deploy story, not just a demo that works once.
     </p>
+
+    <h2>What I'm looking for</h2>
+    <p>
+      A cybersecurity or IT apprenticeship where I can apply these skills in a professional setting, learn from
+      people who've been doing this longer than I have, and keep building. I'm practising offensive and defensive
+      security fundamentals on TryHackMe alongside the project work — see <a href={`${base}credentials`}>Credentials</a>.
+    </p>
+
+    <h2>Skills</h2>
+    <p class="skills-note">
+      Computed from the technologies actually used across the {projects.length} projects on this site — not a
+      hand-written list, so it can't drift out of date.
+    </p>
+    <Skills />
+
+    <h2>Contact</h2>
+    <ul class="contact-list">
+      <li><span>Email</span> <a href="mailto:nopsrust@gmail.com">nopsrust@gmail.com</a></li>
+      <li><span>GitHub</span> <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">github.com/NopsFR</a></li>
+      <li><span>TryHackMe</span> <a href="https://tryhackme.com/p/Oscar.Senior" target="_blank" rel="noopener noreferrer">tryhackme.com/p/Oscar.Senior</a></li>
+    </ul>
+    <p class="cta-line">Interested in an apprentice or junior hire? <a href="mailto:nopsrust@gmail.com">Let's talk</a>.</p>
   </section>
 </Layout>
 
 <style>
   .about-content {
-    max-width: 700px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: var(--space-16) var(--space-8);
+    padding: var(--space-16) var(--space-8) var(--space-24, 6rem);
+  }
+
+  .lede p {
+    font-size: var(--text-xl);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  h2 {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-xl);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-8);
   }
 
   .about-content p {
     color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: 1.75;
+  }
+
+  .about-content p a {
+    color: var(--color-accent-interactive);
+  }
+
+  .skills-note {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-6);
+  }
+
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .contact-list li {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .contact-list span {
+    width: 100px;
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-top: 0.15rem;
+  }
+
+  .cta-line {
+    margin-top: var(--space-6);
     font-size: var(--text-lg);
-    line-height: 1.8;
+    color: var(--color-text-primary);
   }
 </style>

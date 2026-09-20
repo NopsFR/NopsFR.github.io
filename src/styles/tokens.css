@@ -1,27 +1,33 @@
 /* Design Tokens — All pages/components reference these */
 
 :root {
-  /* Colors — dark app shell, neutral cream accents (ref: FEEDBACK app UI) */
+  /* Colors — dark app shell, neutral cream accents (ref: FEEDBACK app UI). Dark is default; light overrides below. */
   --color-bg: #0b0b0d;
   --color-bg-raised: #131316;
   --color-text-primary: #ede9e0;
   --color-text-secondary: #8f8f96;
-  --color-text-tertiary: #5c5c62;
+  --color-text-tertiary: #84848b; /* WCAG AA on dark-mode surfaces (4.99:1) */
   --color-accent-danger: #860e27;
   --color-accent-interactive: #ff2a3a;
   --color-accent-tag: #ff4550; /* WCAG AA-compliant on translucent tag backgrounds; #ff2a3a falls to 4.28:1 there */
+  --color-accent-secondary: #22d3ee; /* cyan — secondary highlight, e.g. "actively learning" tier */
   --color-border: #232326;
   --color-border-strong: #333338;
   --color-surface: #131316;
   --color-cream: #ede9e0;
   --color-cream-text: #0b0b0d;
+  --color-tier-core: #3fb950;
+  --color-tier-learning: #22d3ee;
+  --color-tier-foundation: #8f8f96;
+
+  color-scheme: dark;
 
   /* Layout */
   --sidebar-width: 240px;
 
   /* Typography */
-  --font-display: 'Archivo Expanded', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'Inter Variable', 'Inter', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
 
   --text-xs: 0.75rem;
@@ -50,6 +56,27 @@
   --z-base: 1;
   --z-dropdown: 100;
   --z-modal: 1000;
+}
+
+/* Light mode — opt-in via data-theme="light" on <html> (see ThemeToggle) */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: #fafaf9;
+  --color-bg-raised: #ffffff;
+  --color-text-primary: #17171a;
+  --color-text-secondary: #55555c;
+  --color-text-tertiary: #63636a; /* WCAG AA on light-mode surfaces */
+  --color-accent-interactive: #cc1220;
+  --color-accent-tag: #b3101c;
+  --color-accent-secondary: #0e7490;
+  --color-border: #e4e4e2;
+  --color-border-strong: #cfcfcb;
+  --color-surface: #f2f2f0;
+  --color-cream: #17171a;
+  --color-cream-text: #fafaf9;
+  --color-tier-core: #1a7f37;
+  --color-tier-learning: #0e7490;
+  --color-tier-foundation: #6b6b72;
 }
 
 @media (prefers-reduced-motion: reduce) {

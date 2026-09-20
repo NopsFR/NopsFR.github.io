@@ -1,0 +1,133 @@
+---
+// src/pages/learning-log.astro
+// Built entirely from each project's own `timeline` frontmatter — no separate
+// hand-written diary entries, so this can't say something the project pages
+// don't already back up.
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const projects = await getCollection('projects');
+const base = import.meta.env.BASE_URL;
+
+type Entry = { date: string; event: string; project: string; slug: string };
+
+const entries: Entry[] = [];
+for (const project of projects) {
+  for (const t of project.data.timeline ?? []) {
+    entries.push({ date: t.date, event: t.event, project: project.data.title, slug: project.slug });
+  }
+}
+
+// Sort chronologically by the "YYYY-Qn" (or "YYYY-MM") date string.
+entries.sort((a, b) => a.date.localeCompare(b.date));
+
+const byPeriod = new Map<string, Entry[]>();
+for (const e of entries) {
+  const list = byPeriod.get(e.date) ?? [];
+  list.push(e);
+  byPeriod.set(e.date, list);
+}
+const periods = [...byPeriod.keys()];
+---
+
+<Layout title="Learning Log" description="A chronological log of real project milestones, built from each project's own timeline data.">
+  <section class="log-header">
+    <h1>Learning Log</h1>
+    <p>
+      Every entry below comes directly from a project's own timeline data — {entries.length} milestones across
+      {projects.length} projects, in order. Nothing here is a separate narrative; click through to the project for
+      the full picture.
+    </p>
+  </section>
+
+  <section class="timeline">
+    {
+      periods.map((period) => (
+        <div class="period">
+          <div class="period-label">{period}</div>
+          <ul class="period-entries">
+            {byPeriod.get(period)!.map((e) => (
+              <li>
+                <a href={`${base}projects/${e.slug}`} class="project-tag">
+                  {e.project}
+                </a>
+                <span class="event">{e.event}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</Layout>
+
+<style>
+  .log-header {
+    padding: var(--space-12) var(--space-8) var(--space-8);
+    max-width: 800px;
+  }
+
+  .log-header p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: 1.7;
+  }
+
+  .timeline {
+    padding: 0 var(--space-8) var(--space-16);
+    max-width: 800px;
+  }
+
+  .period {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: var(--space-6);
+    padding: var(--space-6) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .period-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent-interactive);
+    font-weight: 600;
+  }
+
+  .period-entries {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 0.75rem);
+  }
+
+  .period-entries li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3, 0.75rem);
+    flex-wrap: wrap;
+  }
+
+  .project-tag {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text-secondary);
+  }
+
+  .project-tag:hover {
+    border-color: var(--color-accent-interactive);
+    color: var(--color-accent-interactive);
+    text-decoration: none;
+  }
+
+  .event {
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+  }
+</style>

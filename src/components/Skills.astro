@@ -1,0 +1,107 @@
+---
+// src/components/Skills.astro
+// Tiers are computed from the project content collection (technology mentions
+// per project), not hand-typed — so this list can't drift from what's actually
+// in the projects, and stays accurate as projects are added/edited.
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+
+const counts = new Map<string, number>();
+for (const project of projects) {
+  const techs = new Set(Object.values(project.data.technologies).flat());
+  for (const tech of techs) {
+    counts.set(tech, (counts.get(tech) ?? 0) + 1);
+  }
+}
+
+const entries = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const core = entries.filter(([, n]) => n >= 3).map(([t]) => t);
+const building = entries.filter(([, n]) => n === 2).map(([t]) => t);
+const exploring = entries.filter(([, n]) => n === 1).map(([t]) => t);
+---
+
+<div class="skills">
+  <div class="tier">
+    <h3><span class="dot" style="--dot-color: var(--color-tier-core)"></span> Core stack <span class="tier-note">used in 3+ projects</span></h3>
+    <div class="tag-row">
+      {core.map((t) => <span class="tag tag-core">{t}</span>)}
+    </div>
+  </div>
+
+  <div class="tier">
+    <h3><span class="dot" style="--dot-color: var(--color-tier-learning)"></span> Actively building <span class="tier-note">used in 2 projects</span></h3>
+    <div class="tag-row">
+      {building.map((t) => <span class="tag tag-learning">{t}</span>)}
+    </div>
+  </div>
+
+  <div class="tier">
+    <h3><span class="dot" style="--dot-color: var(--color-tier-foundation)"></span> Also explored <span class="tier-note">used in 1 project</span></h3>
+    <div class="tag-row">
+      {exploring.map((t) => <span class="tag tag-foundation">{t}</span>)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .skills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .tier h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-base);
+    margin: 0 0 var(--space-4);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dot-color);
+    flex-shrink: 0;
+  }
+
+  .tier-note {
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-bg-raised);
+    color: var(--color-text-secondary);
+  }
+
+  .tag-core {
+    border-color: var(--color-tier-core);
+    color: var(--color-tier-core);
+  }
+
+  .tag-learning {
+    border-color: var(--color-tier-learning);
+    color: var(--color-tier-learning);
+  }
+
+  .tag-foundation {
+    color: var(--color-text-tertiary);
+  }
+</style>

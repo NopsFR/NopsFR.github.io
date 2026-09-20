@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import Skills from '../components/Skills.astro';
 import tryhackme from '../data/tryhackme.json';
 
 const allProjects = await getCollection('projects');
@@ -15,10 +16,11 @@ const base = import.meta.env.BASE_URL;
 <Layout title="Home" description="Cybersecurity apprenticeship portfolio — full-stack development, Rust, Discord platforms, and offensive security labs.">
   <section class="hero">
     <span class="eyebrow">Cybersecurity apprenticeship candidate</span>
-    <h1>Oscar Senior</h1>
+    <h1>Full-stack developer &amp; cybersecurity enthusiast</h1>
     <p class="bio">
-      {allProjects.length} real projects audited against their own source — Discord platforms, a Tauri/Rust desktop
-      app, SaaS backends, and a security-training simulator. No inflated claims: what's public is linked, what's
+      I'm Oscar — a final-year DISC student building production-shaped systems with Rust, TypeScript, Tauri,
+      Fastify/NestJS, and Discord platforms, while practising offensive and defensive security on TryHackMe.
+      {allProjects.length} real projects, all audited against their own source: what's public is linked, what's
       private is labelled, and what didn't match the code has been rewritten.
     </p>
 
@@ -53,6 +55,14 @@ const base = import.meta.env.BASE_URL;
         ))
       }
     </div>
+  </section>
+
+  <section class="skills-preview">
+    <div class="section-heading">
+      <h2>Skills</h2>
+      <a href={`${base}about`} class="view-all">Full breakdown →</a>
+    </div>
+    <Skills />
   </section>
 
   <section class="cta-section">
@@ -149,6 +159,13 @@ const base = import.meta.env.BASE_URL;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-4);
+  }
+
+  .skills-preview {
+    padding: var(--space-12) var(--space-8);
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid var(--color-border);
   }
 
   .cta-section {
