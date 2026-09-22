@@ -15,25 +15,11 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
-
-// Deterministic hue from the category name — a generated gradient cover for
-// projects without a real logo/cover image, instead of a fabricated photo.
-function hueFromString(input: string): number {
-  let hash = 0;
-  for (let i = 0; i < input.length; i += 1) hash = (hash * 31 + input.charCodeAt(i)) % 360;
-  return hash;
-}
-const coverHue = hueFromString(data.projectType);
 ---
 
 <Layout title={data.title} description={data.description}>
   <article class="project-detail">
-    <div
-      class="cover-strip"
-      class:list={{ 'cover-strip--logo': !!data.logo }}
-      style={data.logo ? `background-image:url(${data.logo})` : `--cover-hue:${coverHue}`}
-    >
-    </div>
+    {data.logo && <div class="cover-strip cover-strip--logo" style={`background-image:url(${data.logo})`} />}
     <header class="project-header">
       <div class="title-row">
         {data.logo && <img src={data.logo} alt="" class="project-logo" width="40" height="40" />}
@@ -150,43 +136,18 @@ const coverHue = hueFromString(data.projectType);
   .project-detail {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 var(--space-8) var(--space-16);
+    padding: var(--space-12) var(--space-8) var(--space-16);
   }
 
   .cover-strip {
-    margin: 0 calc(-1 * var(--space-8)) var(--space-8);
+    margin: 0 0 var(--space-8);
     height: clamp(140px, 22vw, 240px);
-    background-size: cover;
-    background-position: center;
-    background-color: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .cover-strip:not(.cover-strip--logo) {
-    background-image: linear-gradient(
-      135deg,
-      hsl(var(--cover-hue) 55% 14%),
-      var(--color-bg) 70%
-    );
-  }
-
-  .cover-strip--logo {
     background-size: contain;
     background-repeat: no-repeat;
+    background-position: center;
     background-color: var(--color-bg-raised);
-  }
-
-  @media (min-width: 860px) {
-    .project-detail {
-      padding-top: var(--space-4);
-    }
-
-    .cover-strip {
-      border-radius: 0.75rem;
-      margin: 0 0 var(--space-8);
-      border: 1px solid var(--color-border);
-      border-bottom: 1px solid var(--color-border);
-    }
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
   }
 
   .title-row {

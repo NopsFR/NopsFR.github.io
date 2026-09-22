@@ -289,9 +289,9 @@ export async function mountTitleParticles(canvasSelector: string, title: string)
 
   const uniforms = {
     uTime: { value: 0 },
-    uRandom: { value: 1 },
-    uDepth: { value: 40 },
-    uSize: { value: 0.5 },
+    uRandom: { value: 0.25 },
+    uDepth: { value: 14 },
+    uSize: { value: 1.0 },
     uTextureSize: { value: new THREE.Vector2(1, 1) },
     uTexture: { value: null as THREE.CanvasTexture | null },
     uTouch: { value: touchTexture.texture },
