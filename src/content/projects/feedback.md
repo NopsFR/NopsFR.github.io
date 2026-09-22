@@ -106,31 +106,31 @@ recognition:
 
 ## Key Features
 
-✅ **Library Management**
+**Library Management**
 - Import music from local directories
 - Organize by artist, album, playlist
 - Batch metadata editing
 - Smart playlist generation
 
-✅ **Playback**
+**Playback**
 - Full-featured player (seek, shuffle, repeat, queue)
 - Gapless playback
 - Audio format support (MP3, FLAC, OGG, etc.)
 - Visualization
 
-✅ **Metadata**
+**Metadata**
 - MusicBrainz integration (rate-limited)
 - Album artwork finder
 - Custom metadata editing
 - Batch operations
 
-✅ **Accessibility**
+**Accessibility**
 - ARIA roles on sliders, menus, dialogs, tabs, and grids
 - Contrast tokens held to a 4.6:1+ floor
 - Full keyboard navigation with a shortcuts sheet (Ctrl+/)
 - Focus trapping in dialogs, `aria-live` regions for status
 
-✅ **Offline & Mobile**
+**Offline & Mobile**
 - PWA for offline access
 - LAN phone server
 - Sync between devices (local network only)
@@ -155,14 +155,14 @@ recognition:
 ## Portfolio Value
 
 **Demonstrates**:
-- ✅ Rust systems programming + async patterns (Tokio)
-- ✅ Desktop application development (Tauri)
-- ✅ Accessibility-first design (ARIA, focus management, automated axe-core testing)
-- ✅ React component architecture (React 19)
-- ✅ E2E testing & QA automation
-- ✅ Performance optimization (Core Web Vitals)
-- ✅ Open-source practices (GitHub)
-- ✅ Full-stack thinking (backend + frontend + deployment)
+- Rust systems programming + async patterns (Tokio)
+- Desktop application development (Tauri)
+- Accessibility-first design (ARIA, focus management, automated axe-core testing)
+- React component architecture (React 19)
+- E2E testing & QA automation
+- Performance optimization (Core Web Vitals)
+- Open-source practices (GitHub)
+- Full-stack thinking (backend + frontend + deployment)
 
 **For roles**: Junior Full-Stack Developer, Rust Engineer, Desktop App Developer, Accessibility Specialist
 
