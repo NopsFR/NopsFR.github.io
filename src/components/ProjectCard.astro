@@ -17,7 +17,7 @@ const allTech = Object.values(technologies).flat();
 const base = import.meta.env.BASE_URL;
 ---
 
-<a href={`${base}projects/${slug}`} class="project-card">
+<a href={`${base}projects/${slug}`} data-page-link class="project-card">
   <div class="card-header">
     {logo && <img src={logo} alt="" class="card-logo" loading="lazy" width="28" height="28" />}
     <div class="card-heading">

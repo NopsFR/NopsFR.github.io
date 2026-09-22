@@ -59,25 +59,25 @@ timeline:
 
 ## Key Features
 
-✅ **Marketplace Core**
+**Marketplace Core**
 - Product listing + search
 - Checkout flow
 - Order management
 - User reviews + ratings
 
-✅ **Payment Integration**
+**Payment Integration**
 - Stripe Checkout
 - Subscription management
 - Invoice generation
 - Payment webhooks
 
-✅ **Discord Integration**
+**Discord Integration**
 - Bot notifications
 - Community features
 - Automated fulfillment
 - User sync
 
-✅ **Authentication**
+**Authentication**
 - Email/password auth
 - Social OAuth
 - Discord OAuth

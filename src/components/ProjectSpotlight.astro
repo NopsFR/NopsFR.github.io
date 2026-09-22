@@ -1,0 +1,105 @@
+---
+// src/components/ProjectSpotlight.astro
+// Floating card for the homepage's featured project (adapted from the
+// template's BookCard.astro concept — a tilting card with real cover art).
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  cover: string;
+  cta: string;
+}
+const { href, title, description, cover, cta } = Astro.props;
+---
+
+<a href={href} class="spotlight" data-page-link>
+  <span class="spotlight__scene" aria-hidden="true">
+    <img src={cover} alt="" loading="lazy" class="spotlight__cover" />
+  </span>
+  <span class="spotlight__body">
+    <span class="spotlight__title">{title}</span>
+    <span class="spotlight__description">{description}</span>
+    <span class="spotlight__cta">{cta} <span aria-hidden="true">&#8599;</span></span>
+  </span>
+</a>
+
+<script>
+  const card = document.querySelector<HTMLAnchorElement>('.spotlight');
+  if (card && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const scene = card.querySelector<HTMLElement>('.spotlight__scene');
+    card.addEventListener('pointermove', (event) => {
+      const bounds = card.getBoundingClientRect();
+      const px = (event.clientX - bounds.left) / bounds.width - 0.5;
+      const py = (event.clientY - bounds.top) / bounds.height - 0.5;
+      if (scene) scene.style.transform = `rotateX(${py * -8}deg) rotateY(${px * 10}deg)`;
+    });
+    card.addEventListener('pointerleave', () => {
+      if (scene) scene.style.transform = '';
+    });
+  }
+</script>
+
+<style>
+  .spotlight {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: inherit;
+    max-width: 420px;
+  }
+
+  .spotlight:hover {
+    text-decoration: none;
+  }
+
+  .spotlight__scene {
+    display: block;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--color-border-strong);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+    transition: transform 0.2s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .spotlight__cover {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .spotlight__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .spotlight__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--color-text-primary);
+  }
+
+  .spotlight__description {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .spotlight__cta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent-interactive);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spotlight__scene {
+      transition: none;
+    }
+  }
+</style>

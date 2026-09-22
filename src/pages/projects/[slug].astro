@@ -19,6 +19,7 @@ const { Content } = await render(project);
 
 <Layout title={data.title} description={data.description}>
   <article class="project-detail">
+    {data.logo && <div class="cover-strip cover-strip--logo" style={`background-image:url(${data.logo})`} />}
     <header class="project-header">
       <div class="title-row">
         {data.logo && <img src={data.logo} alt="" class="project-logo" width="40" height="40" />}
@@ -126,7 +127,7 @@ const { Content } = await render(project);
     </section>
 
     <p class="back-link">
-      <a href={`${import.meta.env.BASE_URL}projects`}>← All projects</a>
+      <a href={`${import.meta.env.BASE_URL}projects`} data-page-link>← All projects</a>
     </p>
   </article>
 </Layout>
@@ -136,6 +137,17 @@ const { Content } = await render(project);
     max-width: 800px;
     margin: 0 auto;
     padding: var(--space-12) var(--space-8) var(--space-16);
+  }
+
+  .cover-strip {
+    margin: 0 0 var(--space-8);
+    height: clamp(140px, 22vw, 240px);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
   }
 
   .title-row {

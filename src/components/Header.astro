@@ -49,7 +49,7 @@ const navItems = [
       {
         navItems.map((item) => (
           <li>
-            <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]} aria-current={isActive(item.href) ? 'page' : undefined}>
+            <a href={item.href} data-page-link class:list={['nav-link', { active: isActive(item.href) }]} aria-current={isActive(item.href) ? 'page' : undefined}>
               <svg class="icon" viewBox="0 0 24 24"><path d={item.icon} /></svg>
               {item.label}
             </a>
@@ -107,13 +107,21 @@ const navItems = [
   .sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;
-    background: var(--color-surface);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-right: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
     height: 100vh;
     position: sticky;
     top: 0;
+  }
+
+  :root[data-theme='light'] .sidebar {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .sidebar-top {
