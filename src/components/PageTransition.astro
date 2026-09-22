@@ -1,12 +1,14 @@
 ---
 // src/components/PageTransition.astro
-// Canvas2D tunnel overlay for internal navigation. Links opt in via the
-// `data-page-link` attribute (added to the primary nav + project cards).
+// A clean, minimal fade for internal navigation — a dark veil with a small
+// pulsing mark. Links opt in via `data-page-link` (primary nav + project cards).
 ---
 
 <div class="page-transition" data-page-transition aria-hidden="true" inert>
-  <canvas class="page-transition__canvas" aria-hidden="true"></canvas>
-  <p class="page-transition__message">Loading</p>
+  <span class="page-transition__mark" aria-hidden="true"></span>
+  <p class="page-transition__message">
+    <span class="visually-hidden">Loading</span>
+  </p>
   <button class="page-transition__skip" type="button">Skip</button>
 </div>
 
@@ -24,10 +26,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: var(--space-4);
+    background: var(--color-bg);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.35s ease;
   }
 
   .page-transition.is-active {
@@ -35,25 +38,18 @@
     pointer-events: auto;
   }
 
-  .page-transition__canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .page-transition__message {
-    position: relative;
-    color: var(--color-text-primary);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin: 0;
+  .page-transition__mark {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-accent-interactive);
+    box-shadow: 0 0 0 0 rgba(255, 42, 58, 0.5);
+    animation: page-transition-pulse 1s ease-out infinite;
   }
 
   .page-transition__skip {
-    position: relative;
+    position: absolute;
+    bottom: var(--space-8);
     background: transparent;
     border: 1px solid var(--color-border-strong);
     color: var(--color-text-secondary);
@@ -61,11 +57,27 @@
     padding: 0.4rem 0.9rem;
     font-size: var(--text-xs);
     cursor: pointer;
+    opacity: 0;
   }
 
-  .page-transition__skip:hover,
   .page-transition__skip:focus-visible {
+    opacity: 1;
     color: var(--color-text-primary);
     border-color: var(--color-text-secondary);
+  }
+
+  @keyframes page-transition-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 42, 58, 0.5);
+    }
+    100% {
+      box-shadow: 0 0 0 22px rgba(255, 42, 58, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-transition__mark {
+      animation: none;
+    }
   }
 </style>
