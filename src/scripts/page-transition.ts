@@ -39,14 +39,23 @@ export function mountPageTransition(): void {
     const elapsed = Math.min(1, (performance.now() - start) / 900);
     context.fillStyle = '#0b0b0d';
     context.fillRect(0, 0, width, height);
+
+    const glowRadius = Math.min(width, height) * (0.05 + elapsed * 0.9);
+    const glow = context.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+    glow.addColorStop(0, `rgba(255, 69, 80, ${0.5 * (1 - elapsed * 0.3)})`);
+    glow.addColorStop(0.4, `rgba(255, 42, 58, ${0.22 * (1 - elapsed * 0.3)})`);
+    glow.addColorStop(1, 'rgba(255, 42, 58, 0)');
+    context.fillStyle = glow;
+    context.fillRect(0, 0, width, height);
+
     for (const star of stars) {
-      const depth = Math.max(0.01, star.depth - elapsed * 1.2);
+      const depth = Math.max(0.01, star.depth - elapsed * 1.6);
       const radius = star.radius / depth;
       const x = cx + Math.cos(star.angle) * radius;
       const y = cy + Math.sin(star.angle) * radius;
       const previous = star.radius / Math.max(0.01, depth + 0.08);
-      context.strokeStyle = `rgba(255, 69, 80, ${Math.min(0.8, elapsed + 0.1)})`;
-      context.lineWidth = 1 + elapsed * 2;
+      context.strokeStyle = `rgba(255, 120, 130, ${Math.min(1, elapsed + 0.3)})`;
+      context.lineWidth = 1.5 + elapsed * 3.5;
       context.beginPath();
       context.moveTo(cx + Math.cos(star.angle) * previous, cy + Math.sin(star.angle) * previous);
       context.lineTo(x, y);
@@ -76,7 +85,7 @@ export function mountPageTransition(): void {
     overlay!.removeAttribute('aria-hidden');
     overlay!.removeAttribute('inert');
     overlay!.classList.add('is-active');
-    stars = Array.from({ length: 140 }, () => ({
+    stars = Array.from({ length: 220 }, () => ({
       angle: Math.random() * Math.PI * 2,
       radius: Math.random() * Math.min(innerWidth, innerHeight) * 0.7 + 10,
       depth: Math.random(),

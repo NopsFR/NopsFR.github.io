@@ -36,7 +36,8 @@ const { title } = Astro.props;
   .particle-hero {
     position: relative;
     width: 100%;
-    height: clamp(140px, 22vw, 260px);
+    height: clamp(140px, 16vw, 320px);
+    margin: var(--space-2) calc(-1 * var(--space-2)) 0;
   }
 
   .particle-hero__canvas {
