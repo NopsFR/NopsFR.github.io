@@ -1,0 +1,17 @@
+I.D.K. comic page uploads
+
+Put finished comic images in this folder using these exact filenames:
+
+01.webp
+02.webp
+03.webp
+...
+53.webp
+
+One image = one comic page.
+
+You do NOT need to edit the website code for normal page uploads. Once an image is added here, the reader automatically shows it in the correct position.
+
+Recommended format: WebP. Keep the original artwork aspect ratio.
+
+The site is intentionally prepared for all 53 pages before the artwork is available.
