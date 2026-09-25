@@ -3,6 +3,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
+import FlowDiagram from '../../components/FlowDiagram.astro';
 
 export async function getStaticPaths() {
   const allProjects = await getCollection('projects');
@@ -19,13 +20,22 @@ const { Content } = await render(project);
 
 <Layout title={data.title} description={data.description}>
   <article class="project-detail">
-    {data.logo && <div class="cover-strip cover-strip--logo" style={`background-image:url(${data.logo})`} />}
-    <header class="project-header">
+    {
+      data.cover ? (
+        <div class="cover-banner" data-reveal>
+          <img src={data.cover} alt={`${data.title} — product screenshot`} />
+        </div>
+      ) : (
+        data.logo && <div class="cover-strip cover-strip--logo" style={`background-image:url(${data.logo})`} />
+      )
+    }
+    <header class="project-header" data-reveal>
       <div class="title-row">
         {data.logo && <img src={data.logo} alt="" class="project-logo" width="40" height="40" />}
         <h1>{data.title}</h1>
         <StatusBadge status={data.status} />
       </div>
+      {data.tagline && <p class="case-tagline">{data.tagline}</p>}
       <p class="tagline">{data.description}</p>
       <div class="meta-row">
         <span class="meta-tag">{data.projectType}</span>
@@ -54,7 +64,16 @@ const { Content } = await render(project);
       }
     </header>
 
-    <section class="tech-section">
+    {
+      data.flow && data.flow.length > 0 && (
+        <section class="flow-section">
+          <h2>How it works</h2>
+          <FlowDiagram steps={data.flow} />
+        </section>
+      )
+    }
+
+    <section class="tech-section" data-reveal>
       <h2>Technology Stack</h2>
       {
         Object.entries(data.technologies).map(([category, techs]) => (
@@ -70,7 +89,7 @@ const { Content } = await render(project);
       }
     </section>
 
-    <section class="competencies-section">
+    <section class="competencies-section" data-reveal>
       <h2>Competencies</h2>
       <ul class="competency-list">
         {data.competencies.map((c) => <li>{c}</li>)}
@@ -79,7 +98,7 @@ const { Content } = await render(project);
 
     {
       data.timeline && data.timeline.length > 0 && (
-        <section class="timeline-section">
+        <section class="timeline-section" data-reveal>
           <h2>Timeline</h2>
           <ol class="timeline">
             {data.timeline.map((entry) => (
@@ -95,7 +114,7 @@ const { Content } = await render(project);
 
     {
       data.metrics && (
-        <section class="metrics-section">
+        <section class="metrics-section" data-reveal>
           <h2>Metrics</h2>
           <dl class="metrics-grid">
             {Object.entries(data.metrics).map(([key, value]) => (
@@ -111,7 +130,7 @@ const { Content } = await render(project);
 
     {
       data.recognition && data.recognition.length > 0 && (
-        <section class="recognition-section">
+        <section class="recognition-section" data-reveal>
           <h2>Recognition</h2>
           <ul>
             {data.recognition.map((r) => (
@@ -122,7 +141,7 @@ const { Content } = await render(project);
       )
     }
 
-    <section class="content-section">
+    <section class="content-section" data-reveal>
       <Content />
     </section>
 
@@ -148,6 +167,30 @@ const { Content } = await render(project);
     background-color: var(--color-bg-raised);
     border: 1px solid var(--color-border);
     border-radius: 0.75rem;
+  }
+
+  .cover-banner {
+    margin: 0 0 var(--space-8);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+  }
+
+  .cover-banner img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .case-tagline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--color-text-primary);
+    margin: var(--space-4) 0 0;
+    line-height: 1.4;
   }
 
   .title-row {

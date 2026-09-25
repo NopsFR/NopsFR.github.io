@@ -11,6 +11,12 @@ const projects = defineCollection({
     featured: z.boolean(),
     order: z.number(),
     logo: z.string().optional(),
+    /** Wide product screenshot — used on the project card and as the detail-page banner. */
+    cover: z.string().optional(),
+    /** Short "why it exists" line shown above the fold on the card for case-study projects. */
+    tagline: z.string().optional(),
+    /** Ordered process steps rendered as a connected step diagram (e.g. a request/data flow). */
+    flow: z.array(z.string()).optional(),
     technologies: z.record(z.string(), z.array(z.string())),
     competencies: z.array(z.string()),
     links: z

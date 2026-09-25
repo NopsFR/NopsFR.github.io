@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Skills from '../components/Skills.astro';
+import Capabilities from '../components/Capabilities.astro';
 
 const projects = await getCollection('projects');
 const base = import.meta.env.BASE_URL;
@@ -10,9 +11,9 @@ const base = import.meta.env.BASE_URL;
 
 <Layout title="About" description="About Oscar — final-year cybersecurity/IT student, DISC, building a hands-on technical portfolio while applying for apprenticeships.">
   <section class="about-content">
-    <h1>About</h1>
+    <h1 data-reveal>About</h1>
 
-    <div class="lede">
+    <div class="lede" data-reveal>
       <p>
         I'm a final-year student at DISC, specialising in cybersecurity and IT, and I'm looking for a paid
         cybersecurity apprenticeship, IT apprenticeship, or junior technical role.
@@ -42,7 +43,14 @@ const base = import.meta.env.BASE_URL;
       security fundamentals on TryHackMe alongside the project work — see <a href={`${base}credentials`}>Credentials</a>.
     </p>
 
-    <h2>Skills</h2>
+    <h2>Technical capabilities</h2>
+    <p class="skills-note">
+      Grouped by what each technology or decision actually demonstrates, not a frequency count — every line links to
+      the specific project it comes from.
+    </p>
+    <Capabilities />
+
+    <h2>Skills breakdown</h2>
     <p class="skills-note">
       Computed from the technologies actually used across the {projects.length} projects on this site — not a
       hand-written list, so it can't drift out of date.

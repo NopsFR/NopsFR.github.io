@@ -45,7 +45,8 @@ const navItems = [
 
   <nav class="nav" aria-label="Main navigation">
     <span class="nav-label">01 Navigate</span>
-    <ul class="nav-list">
+    <ul class="nav-list" data-nav-list>
+      <span class="nav-indicator" data-nav-indicator aria-hidden="true"></span>
       {
         navItems.map((item) => (
           <li>
@@ -100,6 +101,41 @@ const navItems = [
     });
 
     sync();
+  })();
+</script>
+
+<script is:inline>
+  (function () {
+    var list = document.querySelector('[data-nav-list]');
+    var indicator = document.querySelector('[data-nav-indicator]');
+    if (!list || !indicator) return;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function place(el, animate) {
+      if (!el) {
+        indicator.style.opacity = '0';
+        return;
+      }
+      var listRect = list.getBoundingClientRect();
+      var rect = el.getBoundingClientRect();
+      indicator.style.transition = animate && !reduced ? 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease' : 'none';
+      indicator.style.opacity = '1';
+      indicator.style.height = rect.height + 'px';
+      indicator.style.transform = 'translateY(' + (rect.top - listRect.top) + 'px)';
+    }
+
+    var active = list.querySelector('.nav-link.active');
+    place(active, false);
+
+    list.querySelectorAll('.nav-link').forEach(function (link) {
+      link.addEventListener('mouseenter', function () {
+        place(link, true);
+      });
+    });
+
+    list.addEventListener('mouseleave', function () {
+      place(list.querySelector('.nav-link.active'), true);
+    });
   })();
 </script>
 
@@ -158,12 +194,30 @@ const navItems = [
   }
 
   .nav-list {
+    position: relative;
     list-style: none;
     margin: 0 0 var(--space-6);
-    padding: 0;
+    padding: 0 0 0 6px;
     display: flex;
     flex-direction: column;
     gap: 2px;
+  }
+
+  .nav-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--color-accent-interactive);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-indicator {
+      display: none;
+    }
   }
 
   .nav-link {
@@ -174,16 +228,24 @@ const navItems = [
     border-radius: 0.4rem;
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast);
   }
 
   .nav-link .icon {
     color: var(--color-text-tertiary);
+    transition: color var(--transition-fast);
   }
 
   .nav-link:hover {
     background: var(--color-bg-raised);
     color: var(--color-text-primary);
     text-decoration: none;
+  }
+
+  .nav-link:hover .icon {
+    color: var(--color-text-secondary);
   }
 
   .nav-link.active {
@@ -273,7 +335,12 @@ const navItems = [
     .nav-list {
       flex-direction: row;
       margin: 0;
+      padding-left: 0;
       gap: var(--space-1);
+    }
+
+    .nav-indicator {
+      display: none;
     }
 
     .nav-link span {

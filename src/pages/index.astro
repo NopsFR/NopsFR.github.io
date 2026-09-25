@@ -3,104 +3,142 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import Skills from '../components/Skills.astro';
+import Capabilities from '../components/Capabilities.astro';
 import ParticleHero from '../components/ParticleHero.astro';
-import ProjectSpotlight from '../components/ProjectSpotlight.astro';
 import tryhackme from '../data/tryhackme.json';
 
 const allProjects = await getCollection('projects');
 const sorted = allProjects.sort((a, b) => a.data.order - b.data.order);
-const featuredProjects = sorted.filter((p) => p.data.featured).slice(0, 3);
+const flagship = sorted.find((p) => p.slug === 'nops-cyber-intelligence')!;
+const otherFeatured = sorted.filter((p) => p.data.featured && p.slug !== flagship.slug).slice(0, 4);
 const publicRepoCount = allProjects.filter((p) => p.data.links?.github).length;
-const spotlight = sorted.find((p) => p.slug === 'feedback')!;
 const base = import.meta.env.BASE_URL;
 ---
 
-<Layout title="Home" description="Cybersecurity apprenticeship portfolio — full-stack development, Rust, Discord platforms, and offensive security labs.">
-  <section class="hero-grid">
-    <div class="hero">
-      <span class="eyebrow">Cybersecurity apprenticeship candidate</span>
-      <ParticleHero title="Oscar Senior" />
-      <p class="tagline">Security-minded engineer, full-stack builder</p>
-      <p class="bio">
-        I'm Oscar — a final-year DISC student practising offensive and defensive security fundamentals on TryHackMe,
-        and building production-shaped systems with Rust, TypeScript, Tauri, Fastify/NestJS, and Discord platforms —
-        most of them with real auth, rate limiting, and audit logging, not just a demo that works once.
-        {allProjects.length} real projects, all audited against their own source: what's public is linked, what's
-        private is labelled, and what didn't match the code has been rewritten.
-      </p>
+<Layout
+  title="Home"
+  description="Oscar — security-minded full-stack engineer. Builder of NOPS / Cyber Intelligence, a production threat-intelligence platform, plus real Rust, Tauri and Discord-platform projects."
+>
+  <section class="hero">
+    <span class="eyebrow" data-reveal>Security engineering / full-stack development</span>
+    <ParticleHero title="Oscar Senior" />
+    <p class="tagline" data-reveal>Builder of production-shaped systems, security-first.</p>
+    <p class="bio" data-reveal>
+      I'm Oscar — a final-year DISC student practising offensive and defensive security fundamentals on TryHackMe,
+      and shipping real systems: a full threat-intelligence investigation platform, Rust/Tauri desktop apps, and
+      Discord-native platforms with real auth, rate limiting, and audit logging. {allProjects.length} projects total,
+      every one audited against its own source — what's public is linked, what's private is labelled.
+    </p>
 
-      <div class="hero-actions">
-        <a href={`${base}projects`} data-page-link class="btn btn-primary">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-          View projects
-        </a>
-        <a href={`${base}credentials`} data-page-link class="btn btn-outline">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5 4.5 6.5v5c0 5 3.2 8.6 7.5 10 4.3-1.4 7.5-5 7.5-10v-5L12 3.5Z" /></svg>
-          Credentials
-        </a>
-      </div>
-
-      <dl class="stat-row">
-        <div class="stat"><dt>Projects</dt><dd>{allProjects.length}</dd></div>
-        <div class="stat"><dt>Public repos</dt><dd>{publicRepoCount}</dd></div>
-        <div class="stat"><dt>TryHackMe badges</dt><dd>{tryhackme.stats.totalBadges}</dd></div>
-        <div class="stat"><dt>Rooms completed</dt><dd>{tryhackme.stats.totalRoomsCompleted}</dd></div>
-      </dl>
+    <div class="hero-actions" data-reveal>
+      <a href={`${base}projects`} data-page-link class="btn btn-primary">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        View all work
+      </a>
+      <a href={`${base}credentials`} data-page-link class="btn btn-outline">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5 4.5 6.5v5c0 5 3.2 8.6 7.5 10 4.3-1.4 7.5-5 7.5-10v-5L12 3.5Z" /></svg>
+        Credentials
+      </a>
     </div>
 
-    <div class="spotlight-section">
-      <ProjectSpotlight
-        href={`${base}projects/${spotlight.slug}`}
-        title={spotlight.data.title}
-        description={spotlight.data.description}
-        cover={`${base}images/feedback-cover.png`}
-        cta="View project"
-      />
-    </div>
+    <dl class="stat-row" data-reveal>
+      <div class="stat"><dt>Projects</dt><dd>{allProjects.length}</dd></div>
+      <div class="stat"><dt>Public repos</dt><dd>{publicRepoCount}</dd></div>
+      <div class="stat"><dt>TryHackMe badges</dt><dd>{tryhackme.stats.totalBadges}</dd></div>
+      <div class="stat"><dt>Rooms completed</dt><dd>{tryhackme.stats.totalRoomsCompleted}</dd></div>
+    </dl>
   </section>
 
-  <section class="featured">
-    <div class="section-heading">
-      <h2>Featured work</h2>
-      <a href={`${base}projects`} class="view-all">View all {allProjects.length} →</a>
+  <section class="flagship">
+    <div class="section-heading" data-reveal>
+      <span class="section-kicker">Featured work</span>
+      <h2>NOPS / Cyber Intelligence</h2>
+    </div>
+
+    <a href={`${base}projects/${flagship.slug}`} data-page-link class="flagship-card" data-reveal>
+      <span class="flagship-cover">
+        <img src={flagship.data.cover} alt="NOPS investigation workspace — a live investigations table with observable type, mode, status, findings and source coverage" loading="eager" />
+      </span>
+      <span class="flagship-body">
+        <span class="flagship-tagline">{flagship.data.tagline}</span>
+        <span class="flagship-description">{flagship.data.description}</span>
+        <span class="flagship-metrics">
+          {Object.entries(flagship.data.metrics ?? {}).map(([k, v]) => (
+            <span class="flagship-metric"><b>{v}</b>{k}</span>
+          ))}
+        </span>
+        <span class="flagship-actions">
+          <span class="btn btn-primary">Read the case study →</span>
+          {flagship.data.links?.live && <span class="btn btn-outline" data-external data-href={flagship.data.links.live}>Live app ↗</span>}
+          {flagship.data.links?.github && <span class="btn btn-outline" data-external data-href={flagship.data.links.github}>Source ↗</span>}
+        </span>
+      </span>
+    </a>
+  </section>
+
+  <section class="other-work">
+    <div class="section-heading" data-reveal>
+      <h2>Other projects</h2>
+      <a href={`${base}projects`} data-page-link class="view-all">View all {allProjects.length} →</a>
     </div>
     <div class="project-grid">
-      {
-        featuredProjects.map((project) => (
-          <ProjectCard slug={project.slug} {...project.data} />
-        ))
-      }
+      {otherFeatured.map((project) => <ProjectCard slug={project.slug} {...project.data} />)}
     </div>
   </section>
 
-  <section class="skills-preview">
-    <div class="section-heading">
-      <h2>Skills</h2>
-      <a href={`${base}about`} class="view-all">Full breakdown →</a>
+  <section class="capabilities-section">
+    <div class="section-heading" data-reveal>
+      <h2>Technical capabilities</h2>
+      <a href={`${base}about`} data-page-link class="view-all">Full breakdown →</a>
     </div>
-    <Skills />
+    <Capabilities />
   </section>
 
-  <section class="cta-section">
-    <h2>Ready to discuss an apprenticeship?</h2>
-    <a href={`${base}about`} class="btn btn-outline">Get in touch</a>
+  <section class="journey">
+    <div class="journey-inner" data-reveal>
+      <div>
+        <h2>Still learning, in the open</h2>
+        <p>
+          {tryhackme.stats.totalBadges} TryHackMe badges and {tryhackme.stats.totalRoomsCompleted} completed rooms,
+          tracked honestly — mostly foundational, clearly labelled as exposure rather than mastery. The
+          <a href={`${base}learning-log`} data-page-link>learning log</a> lines up every project milestone in order.
+        </p>
+      </div>
+      <div class="journey-links">
+        <a href={`${base}credentials`} data-page-link class="btn btn-outline">Credentials</a>
+        <a href={`${base}learning-log`} data-page-link class="btn btn-outline">Learning log</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" data-reveal>
+    <div>
+      <h2>Ready to discuss an apprenticeship?</h2>
+      <p>Every claim on this site links back to real, inspectable source. Start with <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">github.com/NopsFR</a>.</p>
+    </div>
+    <a href={`${base}about`} data-page-link class="btn btn-primary">Get in touch</a>
   </section>
 </Layout>
 
+<script>
+  // The flagship card is a single anchor (for a large, clickable hit-area);
+  // its inner "Live app" / "Source" pills are rendered as spans so they don't
+  // create nested <a> tags, and instead open their real target on click.
+  document.querySelectorAll<HTMLElement>('.flagship-card [data-external]').forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const url = el.dataset.href;
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    });
+  });
+</script>
+
 <style>
-  .hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-    gap: var(--space-12);
-    align-items: start;
-    max-width: 1400px;
+  .hero {
+    max-width: 800px;
     margin: 0 auto;
     padding: var(--space-16) var(--space-8) var(--space-12);
-  }
-
-  .hero {
-    min-width: 0;
   }
 
   .eyebrow {
@@ -119,26 +157,12 @@ const base = import.meta.env.BASE_URL;
     margin: var(--space-4) 0 var(--space-4);
   }
 
-  .spotlight-section {
-    padding-top: var(--space-16);
-  }
-
   .bio {
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 0 var(--space-8);
     color: var(--color-text-secondary);
     font-size: var(--text-lg);
     line-height: 1.75;
-  }
-
-  @media (max-width: 980px) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .spotlight-section {
-      padding-top: 0;
-    }
   }
 
   .hero-actions {
@@ -170,10 +194,16 @@ const base = import.meta.env.BASE_URL;
     color: var(--color-text-primary);
   }
 
-  .featured {
+  section {
     padding: var(--space-12) var(--space-8);
     max-width: 1400px;
     margin: 0 auto;
+  }
+
+  .flagship,
+  .other-work,
+  .capabilities-section,
+  .journey {
     border-top: 1px solid var(--color-border);
   }
 
@@ -183,11 +213,22 @@ const base = import.meta.env.BASE_URL;
     justify-content: space-between;
     gap: var(--space-4);
     margin-bottom: var(--space-8);
+    flex-wrap: wrap;
+  }
+
+  .section-kicker {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent-interactive);
+    margin-bottom: var(--space-2);
   }
 
   .section-heading h2 {
     margin: 0;
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
   }
 
   .view-all {
@@ -196,23 +237,147 @@ const base = import.meta.env.BASE_URL;
     white-space: nowrap;
   }
 
+  /* Flagship (NOPS) */
+  .flagship-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(280px, 1fr);
+    gap: 0;
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 1rem;
+    overflow: hidden;
+    color: inherit;
+    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7);
+    transition:
+      transform var(--transition-fast),
+      border-color var(--transition-safe);
+  }
+
+  .flagship-card:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+    border-color: var(--color-accent-interactive);
+  }
+
+  .flagship-cover {
+    display: block;
+    overflow: hidden;
+    background: #000;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .flagship-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 32% top;
+    transform: scale(1.01);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .flagship-card:hover .flagship-cover img {
+    transform: scale(1.05);
+  }
+
+  .flagship-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-8);
+  }
+
+  .flagship-tagline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    color: var(--color-text-primary);
+    line-height: 1.3;
+  }
+
+  .flagship-description {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+  }
+
+  .flagship-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .flagship-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+  }
+
+  .flagship-metric b {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--color-accent-tag);
+    font-weight: 600;
+  }
+
+  .flagship-actions {
+    display: flex;
+    gap: var(--space-3, 0.75rem);
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  @media (max-width: 900px) {
+    .flagship-card {
+      grid-template-columns: 1fr;
+    }
+
+    .flagship-cover {
+      aspect-ratio: 16 / 10;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-4);
   }
 
-  .skills-preview {
-    padding: var(--space-12) var(--space-8);
-    max-width: 1400px;
-    margin: 0 auto;
-    border-top: 1px solid var(--color-border);
+  /* Learning journey */
+  .journey-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    flex-wrap: wrap;
+  }
+
+  .journey-inner h2 {
+    font-size: var(--text-xl);
+    margin: 0 0 var(--space-2);
+  }
+
+  .journey-inner p {
+    max-width: 560px;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .journey-links {
+    display: flex;
+    gap: var(--space-3, 0.75rem);
+    flex-wrap: wrap;
   }
 
   .cta-section {
-    padding: var(--space-16) var(--space-8);
-    max-width: 1400px;
-    margin: 0 auto;
     border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
@@ -223,6 +388,12 @@ const base = import.meta.env.BASE_URL;
 
   .cta-section h2 {
     font-size: var(--text-xl);
+    margin: 0 0 var(--space-2);
+  }
+
+  .cta-section p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
     margin: 0;
   }
 </style>

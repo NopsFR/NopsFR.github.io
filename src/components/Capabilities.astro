@@ -1,0 +1,133 @@
+---
+// src/components/Capabilities.astro
+// Hand-grouped, not a frequency count like Skills.astro — every line here is a
+// real technology or decision drawn directly from a specific project's own
+// content file (linked), organised by what kind of capability it demonstrates
+// rather than how often the exact string repeats. No proficiency percentages.
+const base = import.meta.env.BASE_URL;
+
+interface Item {
+  label: string;
+  slug: string;
+}
+
+const categories: { name: string; items: Item[] }[] = [
+  {
+    name: 'Security',
+    items: [
+      { label: 'SSRF-hardened outbound request layer', slug: 'nops-cyber-intelligence' },
+      { label: 'DNS-rebinding-safe resolution & public-IP-only policy', slug: 'nops-cyber-intelligence' },
+      { label: 'Security audit logging (IpLog / SecurityLog)', slug: 'nops-bio' },
+      { label: 'TOTP two-factor authentication', slug: 'desicord' },
+      { label: 'Rate limiting & security headers (Helmet)', slug: 'nexus' },
+      { label: 'Role-based permissions & moderation tooling', slug: 'desicord' },
+    ],
+  },
+  {
+    name: 'Development',
+    items: [
+      { label: 'Next.js (App Router) + React', slug: 'nops-cyber-intelligence' },
+      { label: 'NestJS API architecture', slug: 'veya-cord' },
+      { label: 'Tauri 2 desktop applications', slug: 'feedback' },
+      { label: 'Full-stack TypeScript', slug: 'nops-bio' },
+      { label: 'Accessibility-first UI (ARIA, axe-core)', slug: 'feedback' },
+    ],
+  },
+  {
+    name: 'Networking',
+    items: [
+      { label: 'DNS, DNSSEC, SPF/DKIM/DMARC, TLS inspection', slug: 'nops-cyber-intelligence' },
+      { label: 'RDAP, passive DNS, certificate-transparency lookups', slug: 'nops-cyber-intelligence' },
+      { label: 'Authenticated WebSocket gateways', slug: 'sentcord' },
+      { label: 'Third-party WebSocket API integration', slug: 'ncg-bot-new' },
+    ],
+  },
+  {
+    name: 'Data',
+    items: [
+      { label: 'PostgreSQL + Prisma ORM', slug: 'nops-cyber-intelligence' },
+      { label: 'Zod-validated external data parsing', slug: 'nops-cyber-intelligence' },
+      { label: 'MongoDB + Mongoose', slug: 'inertia' },
+      { label: 'SQLite (transactional, embedded)', slug: 'feedback' },
+    ],
+  },
+  {
+    name: 'Infrastructure',
+    items: [
+      { label: 'Turborepo monorepos with shared packages', slug: 'veya-cord' },
+      { label: 'Docker Compose local dev stacks', slug: 'sentcord' },
+      { label: 'Multi-target deploys (Docker, PM2, Railway, Render)', slug: 'ncg-bot-new' },
+      { label: 'Vercel deployment & serverless functions', slug: 'nops-cyber-intelligence' },
+    ],
+  },
+  {
+    name: 'Tooling',
+    items: [
+      { label: 'Vitest + Playwright automated testing', slug: 'nops-cyber-intelligence' },
+      { label: 'Stripe payment integration', slug: 'inertia' },
+      { label: 'Automated accessibility sweeps (axe-core)', slug: 'feedback' },
+    ],
+  },
+];
+---
+
+<div class="capabilities" data-reveal-group="capabilities">
+  {
+    categories.map((cat) => (
+      <div class="cap-card" data-reveal data-reveal-group="capabilities">
+        <h3>{cat.name}</h3>
+        <ul>
+          {cat.items.map((item) => (
+            <li>
+              <a href={`${base}projects/${item.slug}`} data-page-link>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .capabilities {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .cap-card {
+    padding: var(--space-6);
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+  }
+
+  .cap-card h3 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-interactive);
+  }
+
+  .cap-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .cap-card li a {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .cap-card li a:hover {
+    color: var(--color-text-primary);
+  }
+</style>
