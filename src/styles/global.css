@@ -54,19 +54,26 @@ code {
 
 a {
   color: var(--color-accent-interactive);
-  text-decoration: none;
-  transition: color var(--transition-safe);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+  transition:
+    color var(--transition-safe),
+    text-decoration-color var(--transition-safe);
 }
 
 a:hover {
   color: var(--color-accent-danger);
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--color-accent-interactive);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* Buttons — solid/outline pair, ref: FEEDBACK app's "IMPORT MUSIC" / "LIBRARY SETTINGS" */
@@ -80,16 +87,32 @@ button:focus-visible {
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  text-decoration: none;
   border: 1px solid transparent;
   cursor: pointer;
   transition:
     background var(--transition-safe),
     border-color var(--transition-safe),
+    box-shadow var(--transition-safe),
     transform var(--transition-fast);
 }
 
 .btn:hover {
   text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.05s;
+}
+
+.btn .icon {
+  transition: transform var(--transition-safe);
+}
+
+.btn:hover .icon {
+  transform: translateX(2px);
 }
 
 .btn-primary {
@@ -99,6 +122,7 @@ button:focus-visible {
 
 .btn-primary:hover {
   background: #fff;
+  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.5);
 }
 
 .btn-outline {
@@ -108,8 +132,9 @@ button:focus-visible {
 }
 
 .btn-outline:hover {
-  border-color: var(--color-text-secondary);
+  border-color: var(--color-accent-interactive);
   background: var(--color-bg-raised);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent-interactive) 35%, transparent);
 }
 
 .icon {
@@ -121,6 +146,58 @@ button:focus-visible {
   stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* Cursor-reactive spotlight — see src/scripts/spotlight.ts. Any element with
+   [data-spotlight] gets a soft highlight that follows the pointer, sitting
+   just above its background and below its content. Desktop/fine-pointer
+   only; the script no-ops on touch and under prefers-reduced-motion. */
+[data-spotlight] {
+  --spot-opacity: 0;
+  position: relative;
+}
+
+[data-spotlight]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  opacity: var(--spot-opacity);
+  transition: opacity 0.3s ease;
+  background: radial-gradient(220px circle at var(--spot-x, 50%) var(--spot-y, 50%), color-mix(in srgb, var(--color-accent-interactive) 12%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+[data-spotlight] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Neon glow — used sparingly on a few numbers/accents, not everywhere. */
+.neon {
+  text-shadow:
+    0 0 6px currentColor,
+    0 0 16px color-mix(in srgb, currentColor 70%, transparent),
+    0 0 32px color-mix(in srgb, currentColor 45%, transparent);
+}
+
+/* Typewriter caret — see src/scripts/typewriter.ts */
+[data-typewriter].is-typing::after {
+  content: '';
+  display: inline-block;
+  width: 0.5ch;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: caret-blink 0.9s step-end infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .visually-hidden {

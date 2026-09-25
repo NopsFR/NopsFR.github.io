@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Capabilities from '../components/Capabilities.astro';
-import ParticleHero from '../components/ParticleHero.astro';
+import ReactiveHero from '../components/ReactiveHero.astro';
 import tryhackme from '../data/tryhackme.json';
 
 const allProjects = await getCollection('projects');
@@ -21,8 +21,8 @@ const base = import.meta.env.BASE_URL;
 >
   <section class="hero">
     <span class="eyebrow" data-reveal>Security engineering / full-stack development</span>
-    <ParticleHero title="Oscar Senior" />
-    <p class="tagline" data-reveal>Builder of production-shaped systems, security-first.</p>
+    <ReactiveHero title="Oscar Senior" />
+    <p class="tagline" data-reveal data-typewriter>Builder of production-shaped systems, security-first.</p>
     <p class="bio" data-reveal>
       I'm Oscar — a final-year DISC student practising offensive and defensive security fundamentals on TryHackMe,
       and shipping real systems: a full threat-intelligence investigation platform, Rust/Tauri desktop apps, and
@@ -60,11 +60,11 @@ const base = import.meta.env.BASE_URL;
         <img src={flagship.data.cover} alt="NOPS investigation workspace — a live investigations table with observable type, mode, status, findings and source coverage" loading="eager" />
       </span>
       <span class="flagship-body">
-        <span class="flagship-tagline">{flagship.data.tagline}</span>
+        <span class="flagship-tagline" data-typewriter>{flagship.data.tagline}</span>
         <span class="flagship-description">{flagship.data.description}</span>
         <span class="flagship-metrics">
           {Object.entries(flagship.data.metrics ?? {}).map(([k, v]) => (
-            <span class="flagship-metric"><b>{v}</b>{k}</span>
+            <span class="flagship-metric"><b class="neon">{v}</b>{k}</span>
           ))}
         </span>
         <span class="flagship-actions">
@@ -148,6 +148,7 @@ const base = import.meta.env.BASE_URL;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--color-accent-interactive);
+    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
     margin-bottom: var(--space-4);
   }
 
@@ -223,6 +224,7 @@ const base = import.meta.env.BASE_URL;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent-interactive);
+    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
     margin-bottom: var(--space-2);
   }
 
@@ -256,7 +258,8 @@ const base = import.meta.env.BASE_URL;
   .flagship-card:hover {
     text-decoration: none;
     transform: translateY(-2px);
-    border-color: var(--color-accent-interactive);
+    border-color: var(--color-accent-secondary);
+    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--color-accent-secondary) 25%, transparent);
   }
 
   .flagship-cover {
@@ -320,7 +323,7 @@ const base = import.meta.env.BASE_URL;
   .flagship-metric b {
     font-family: var(--font-mono);
     font-size: var(--text-lg);
-    color: var(--color-accent-tag);
+    color: var(--color-accent-secondary);
     font-weight: 600;
   }
 

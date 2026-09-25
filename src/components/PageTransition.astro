@@ -1,11 +1,10 @@
 ---
 // src/components/PageTransition.astro
-// A clean, minimal fade for internal navigation — a dark veil with a small
-// pulsing mark. Links opt in via `data-page-link` (primary nav + project cards).
+// A fast circular wipe expanding from the clicked point — replaces the old
+// pulsing-dot loader. Links opt in via `data-page-link` (primary nav + project cards).
 ---
 
 <div class="page-transition" data-page-transition aria-hidden="true" inert>
-  <span class="page-transition__mark" aria-hidden="true"></span>
   <p class="page-transition__message">
     <span class="visually-hidden">Loading</span>
   </p>
@@ -19,32 +18,36 @@
 
 <style>
   .page-transition {
+    --origin-x: 50%;
+    --origin-y: 50%;
     position: fixed;
     inset: 0;
     z-index: 1000;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: var(--space-4);
     background: var(--color-bg);
-    opacity: 0;
+    clip-path: circle(0% at var(--origin-x) var(--origin-y));
+    transition: clip-path 0.42s var(--ease-out-expo);
     pointer-events: none;
-    transition: opacity 0.35s ease;
+  }
+
+  .page-transition::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--origin-x) var(--origin-y), color-mix(in srgb, var(--color-accent-interactive) 14%, transparent), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .page-transition.is-active {
-    opacity: 1;
+    clip-path: circle(150% at var(--origin-x) var(--origin-y));
     pointer-events: auto;
   }
 
-  .page-transition__mark {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--color-accent-interactive);
-    box-shadow: 0 0 0 0 rgba(255, 42, 58, 0.5);
-    animation: page-transition-pulse 1s ease-out infinite;
+  .page-transition.is-active::before {
+    opacity: 1;
   }
 
   .page-transition__skip {
@@ -66,18 +69,13 @@
     border-color: var(--color-text-secondary);
   }
 
-  @keyframes page-transition-pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(255, 42, 58, 0.5);
-    }
-    100% {
-      box-shadow: 0 0 0 22px rgba(255, 42, 58, 0);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .page-transition__mark {
-      animation: none;
+    .page-transition {
+      transition: none;
+    }
+
+    .page-transition::before {
+      transition: none;
     }
   }
 </style>

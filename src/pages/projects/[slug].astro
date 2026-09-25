@@ -120,7 +120,7 @@ const { Content } = await render(project);
             {Object.entries(data.metrics).map(([key, value]) => (
               <div class="metric">
                 <dt>{key}</dt>
-                <dd>{value}</dd>
+                <dd class="neon">{value}</dd>
               </div>
             ))}
           </dl>
@@ -306,6 +306,7 @@ const { Content } = await render(project);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-accent-interactive);
+    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
   }
 
   .metrics-grid {
@@ -331,6 +332,7 @@ const { Content } = await render(project);
     margin: 0;
     font-size: var(--text-lg);
     font-family: var(--font-mono);
+    color: var(--color-accent-secondary);
   }
 
   .content-section :global(h2) {

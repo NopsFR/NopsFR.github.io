@@ -18,7 +18,7 @@ const allTech = Object.values(technologies).flat();
 const base = import.meta.env.BASE_URL;
 ---
 
-<a href={`${base}projects/${slug}`} data-page-link data-reveal class:list={['project-card', { 'has-cover': !!cover }]}>
+<a href={`${base}projects/${slug}`} data-page-link data-reveal data-spotlight class:list={['project-card', { 'has-cover': !!cover }]}>
   {
     cover && (
       <span class="card-cover" aria-hidden="true">
@@ -42,7 +42,9 @@ const base = import.meta.env.BASE_URL;
 
 <style>
   .project-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--color-bg-raised);
     border: 1px solid var(--color-border);
     border-radius: 0.75rem;
@@ -83,6 +85,9 @@ const base = import.meta.env.BASE_URL;
   }
 
   .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: var(--space-6);
   }
 
@@ -133,7 +138,7 @@ const base = import.meta.env.BASE_URL;
   }
 
   .tech-line {
-    margin: 0;
+    margin-top: auto;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-accent-tag);

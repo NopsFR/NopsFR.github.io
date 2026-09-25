@@ -7,7 +7,7 @@ import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/600.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import SpaceBackground from '../components/SpaceBackground.astro';
+import AtmosphericBackground from '../components/AtmosphericBackground.astro';
 import PageTransition from '../components/PageTransition.astro';
 
 interface Props {
@@ -41,7 +41,7 @@ const site = 'Oscar Portfolio';
     </script>
   </head>
   <body>
-    <SpaceBackground />
+    <AtmosphericBackground />
     <div class="app-shell">
       <Header />
       <div class="app-content">
@@ -54,7 +54,11 @@ const site = 'Oscar Portfolio';
     <PageTransition />
     <script>
       import { mountReveal } from '../scripts/reveal';
+      import { mountSpotlight } from '../scripts/spotlight';
+      import { mountTypewriter } from '../scripts/typewriter';
       mountReveal();
+      mountSpotlight();
+      mountTypewriter();
     </script>
   </body>
 </html>
