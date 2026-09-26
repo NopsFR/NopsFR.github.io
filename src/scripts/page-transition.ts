@@ -1,59 +1,79 @@
-// A fast circular wipe that expands from the clicked point (or screen centre
-// for keyboard activation) rather than the old pulsing-dot loader. The
-// clip-path is driven directly via inline styles with a forced reflow
-// between the "from" and "to" states — CSS custom properties referenced
-// inside clip-path: circle() proved unreliable across a class toggle in
-// Chromium, so this sets concrete pixel values on both ends instead.
-const DURATION = 380;
+// Cross-page transition controller — see PageTransition.astro for the scene.
+// Leaving: set the destination's label/accent, add `pt-leaving`, navigate
+// after the planes have closed. Arriving: Layout's inline <head> script has
+// already added `pt-incoming` (covered) from sessionStorage; here we swap it
+// for `pt-revealing` and announce `pt:reveal` so page content starts its
+// entrance as the planes open.
+import { routeMeta } from '../data/routes';
+
+const EXIT_MS = 500;
+const REVEAL_MS = 620;
+const HOLD_MS = 130;
 
 export function mountPageTransition(): void {
-  const overlay = document.querySelector<HTMLElement>('[data-page-transition]');
+  const html = document.documentElement;
+  const overlay = document.querySelector<HTMLElement>('[data-pt]');
   if (!overlay) return;
-  const skip = overlay.querySelector<HTMLButtonElement>('.page-transition__skip');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const base = import.meta.env.BASE_URL;
 
-  let destination = '';
-  let timer: number | undefined;
-  let selectedLink: HTMLAnchorElement | undefined;
-
-  const finish = () => {
-    if (timer !== undefined) window.clearTimeout(timer);
-    selectedLink?.classList.remove('is-transitioning');
-    if (destination) window.location.assign(destination);
+  const clearLabel = () => {
+    ['--pt-title', '--pt-index', '--pt-path'].forEach((p) => html.style.removeProperty(p));
+    delete overlay.dataset.accent;
   };
 
-  function begin(event: MouseEvent) {
-    const target = event.target as Element;
-    const link = target.closest<HTMLAnchorElement>('a[data-page-link]');
-    if (!link || !link.href || link.target === '_blank') return;
-    if (link.href === window.location.href) return;
-    event.preventDefault();
-    destination = link.href;
-    selectedLink = link;
-    link.classList.add('is-transitioning');
+  if (html.classList.contains('pt-incoming')) {
+    window.setTimeout(() => {
+      requestAnimationFrame(() => {
+        html.classList.add('pt-revealing');
+        html.classList.remove('pt-incoming');
+        window.dispatchEvent(new Event('pt:reveal'));
+        window.setTimeout(() => {
+          html.classList.remove('pt-revealing');
+          clearLabel();
+        }, REVEAL_MS + 120);
+      });
+    }, HOLD_MS);
+  }
 
-    if (reducedMotion) {
-      finish();
+  // Returning via the back/forward cache must never land on a covered page.
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      html.classList.remove('pt-leaving', 'pt-incoming', 'pt-revealing');
+      clearLabel();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-page-link]');
+    if (!link || link.target === '_blank' || !link.href) return;
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+    if (url.pathname === window.location.pathname) return;
+    event.preventDefault();
+
+    if (reduced) {
+      window.location.assign(url.href);
       return;
     }
 
-    const originX = event.clientX || window.innerWidth / 2;
-    const originY = event.clientY || window.innerHeight / 2;
-    overlay!.style.setProperty('--origin-x', `${originX}px`);
-    overlay!.style.setProperty('--origin-y', `${originY}px`);
-    overlay!.style.clipPath = `circle(0% at ${originX}px ${originY}px)`;
-    overlay!.removeAttribute('aria-hidden');
-    overlay!.removeAttribute('inert');
-    overlay!.classList.add('is-active');
-    // Force a style flush so the browser paints the 0% state before the
-    // target state is applied — without this the two writes can coalesce
-    // into one frame and the transition never visibly runs.
-    void overlay!.offsetHeight;
-    overlay!.style.clipPath = `circle(150% at ${originX}px ${originY}px)`;
-    skip?.focus({ preventScroll: true });
-    timer = window.setTimeout(finish, DURATION);
-  }
+    const meta = routeMeta(url.pathname, base);
+    const label = link.dataset.ptLabel || meta.label;
+    const index = `${meta.index} / ${meta.label.toUpperCase()}`;
+    const path = `${url.host}${url.pathname.replace(/\/$/, '')}`;
 
-  document.addEventListener('click', begin);
-  skip?.addEventListener('click', finish);
+    html.style.setProperty('--pt-title', JSON.stringify(label));
+    html.style.setProperty('--pt-index', JSON.stringify(index));
+    html.style.setProperty('--pt-path', JSON.stringify(path));
+    overlay.dataset.accent = meta.accent;
+    try {
+      sessionStorage.setItem('pt', JSON.stringify({ label, index, path, t: Date.now() }));
+    } catch {
+      /* storage unavailable — the destination simply loads without the arrival half */
+    }
+
+    html.classList.add('pt-leaving');
+    window.setTimeout(() => window.location.assign(url.href), EXIT_MS);
+  });
 }

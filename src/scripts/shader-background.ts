@@ -93,9 +93,14 @@ export function mountShaderBackground(selector: string): (() => void) | undefine
   const uTime = gl.getUniformLocation(program, 'u_time');
   const uRes = gl.getUniformLocation(program, 'u_resolution');
   const style = getComputedStyle(document.documentElement);
-  gl.uniform3fv(gl.getUniformLocation(program, 'u_red'), hexToVec3(style.getPropertyValue('--color-accent-interactive').trim() || '#ff2b3c'));
-  gl.uniform3fv(gl.getUniformLocation(program, 'u_cyan'), hexToVec3(style.getPropertyValue('--color-accent-secondary').trim() || '#2fd8c9'));
-  gl.uniform3fv(gl.getUniformLocation(program, 'u_gold'), hexToVec3(style.getPropertyValue('--color-accent-gold').trim() || '#f0b429'));
+  // Each page lights the field with its own accent trio (see tokens.css).
+  const pick = (name: string, fallback: string) => {
+    const v = style.getPropertyValue(name).trim();
+    return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
+  };
+  gl.uniform3fv(gl.getUniformLocation(program, 'u_red'), hexToVec3(pick('--page-accent', '#ff2b3c')));
+  gl.uniform3fv(gl.getUniformLocation(program, 'u_cyan'), hexToVec3(pick('--page-accent-2', '#2fd8c9')));
+  gl.uniform3fv(gl.getUniformLocation(program, 'u_gold'), hexToVec3(pick('--page-accent-3', '#f0b429')));
 
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   const resize = () => {
@@ -112,9 +117,14 @@ export function mountShaderBackground(selector: string): (() => void) | undefine
   let running = true;
   const start = performance.now();
 
+  // The field moves slowly, so ~30fps is visually identical to 60 at half the GPU cost.
+  let last = 0;
   const draw = (time: number) => {
-    gl.uniform1f(uTime, (time - start) / 1000);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (time - last >= 32 || last === 0) {
+      last = time;
+      gl.uniform1f(uTime, (time - start) / 1000);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
     if (running && !reduced) raf = requestAnimationFrame(draw);
   };
   draw(start);

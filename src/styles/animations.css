@@ -1,40 +1,93 @@
-/* Motion + transitions. Respects prefers-reduced-motion via tokens.css. */
+/* Motion system. Respects prefers-reduced-motion (see bottom + tokens.css). */
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fade-in var(--transition-slow) ease-out both;
-}
-
-/* Scroll-triggered reveal — see src/scripts/reveal.ts. Elements start
-   slightly lower and transparent, then settle into place once observed. */
+/* ---- Reveals (src/scripts/reveal.ts). Keyframe animations, not transitions,
+   so they never override a component's own hover transitions. `translate` is
+   used instead of `transform` for the same reason. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(14px);
-  transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
 }
 
 [data-reveal].is-revealed {
+  animation: reveal-up 0.72s var(--ease-out-expo) var(--reveal-delay, 0ms) both;
+}
+
+[data-reveal='mask'] {
   opacity: 1;
-  transform: translateY(0);
+  clip-path: inset(0 0 100% 0);
+}
+
+[data-reveal='mask'].is-revealed {
+  animation: reveal-mask 0.9s cubic-bezier(0.7, 0, 0.2, 1) var(--reveal-delay, 0ms) both;
+}
+
+[data-reveal='line'] {
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+[data-reveal='line'].is-revealed {
+  animation: reveal-line 1s var(--ease-out-expo) var(--reveal-delay, 0ms) both;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-mask {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes reveal-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---- Page transition: content drifts with the planes (see PageTransition.astro). */
+html.pt-leaving main {
+  opacity: 0;
+  translate: -28px 0;
+  transition:
+    opacity 0.34s ease,
+    translate 0.46s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+html.pt-incoming main {
+  opacity: 0;
+  translate: 32px 0;
+}
+
+html.pt-revealing main {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 0.45s ease 0.12s,
+    translate 0.7s var(--ease-out-expo) 0.1s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
+  [data-reveal],
+  [data-reveal='mask'],
+  [data-reveal='line'] {
     opacity: 1;
+    clip-path: none;
     transform: none;
-    transition: none;
+    animation: none !important;
   }
 }

@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Capabilities from '../components/Capabilities.astro';
-import ReactiveHero from '../components/ReactiveHero.astro';
+import ParticleName from '../components/ParticleName.astro';
 import tryhackme from '../data/tryhackme.json';
 
 const allProjects = await getCollection('projects');
@@ -19,9 +19,9 @@ const base = import.meta.env.BASE_URL;
   title="Home"
   description="Oscar — security-minded full-stack engineer. Builder of NOPS / Cyber Intelligence, a production threat-intelligence platform, plus real Rust, Tauri and Discord-platform projects."
 >
-  <section class="hero">
+  <section class="hero wrap">
     <span class="eyebrow" data-reveal>Security engineering / full-stack development</span>
-    <ReactiveHero title="Oscar Senior" />
+    <ParticleName title="Oscar Senior" />
     <p class="tagline" data-reveal data-typewriter>Builder of production-shaped systems, security-first.</p>
     <p class="bio" data-reveal>
       I'm Oscar — a final-year DISC student practising offensive and defensive security fundamentals on TryHackMe,
@@ -49,13 +49,15 @@ const base = import.meta.env.BASE_URL;
     </dl>
   </section>
 
-  <section class="flagship">
-    <div class="section-heading" data-reveal>
-      <span class="section-kicker">Featured work</span>
-      <h2>NOPS / Cyber Intelligence</h2>
+  <section class="sec flagship wrap" data-accent="blue">
+    <div class="sec-head" data-reveal>
+      <div>
+        <p class="sec-index">Featured work</p>
+        <h2 class="sec-title">NOPS / Cyber Intelligence</h2>
+      </div>
     </div>
 
-    <a href={`${base}projects/${flagship.slug}`} data-page-link class="flagship-card" data-reveal>
+    <a href={`${base}projects/${flagship.slug}`} data-page-link data-tilt data-spotlight class="flagship-card" data-reveal>
       <span class="flagship-cover">
         <img src={flagship.data.cover} alt="NOPS investigation workspace — a live investigations table with observable type, mode, status, findings and source coverage" loading="eager" />
       </span>
@@ -68,33 +70,42 @@ const base = import.meta.env.BASE_URL;
           ))}
         </span>
         <span class="flagship-actions">
-          <span class="btn btn-primary">Read the case study →</span>
+          <span class="btn btn-primary">Read the case study <span class="arr">→</span></span>
           {flagship.data.links?.live && <span class="btn btn-outline" data-external data-href={flagship.data.links.live}>Live app ↗</span>}
           {flagship.data.links?.github && <span class="btn btn-outline" data-external data-href={flagship.data.links.github}>Source ↗</span>}
         </span>
       </span>
+      <span class="sec-rule" aria-hidden="true"></span>
     </a>
   </section>
 
-  <section class="other-work">
-    <div class="section-heading" data-reveal>
-      <h2>Other projects</h2>
-      <a href={`${base}projects`} data-page-link class="view-all">View all {allProjects.length} →</a>
+  <section class="sec other-work wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <p class="sec-index">02</p>
+        <h2 class="sec-title">Other projects</h2>
+      </div>
+      <a href={`${base}projects`} data-page-link class="link-arrow">View all {allProjects.length}<span class="arr">→</span></a>
+      <span class="sec-rule" aria-hidden="true"></span>
     </div>
     <div class="project-grid">
       {otherFeatured.map((project) => <ProjectCard slug={project.slug} {...project.data} />)}
     </div>
   </section>
 
-  <section class="capabilities-section">
-    <div class="section-heading" data-reveal>
-      <h2>Technical capabilities</h2>
-      <a href={`${base}about`} data-page-link class="view-all">Full breakdown →</a>
+  <section class="sec capabilities-section wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <p class="sec-index">03</p>
+        <h2 class="sec-title">Technical capabilities</h2>
+      </div>
+      <a href={`${base}about`} data-page-link class="link-arrow">Full breakdown<span class="arr">→</span></a>
+      <span class="sec-rule" aria-hidden="true"></span>
     </div>
     <Capabilities />
   </section>
 
-  <section class="journey">
+  <section class="sec journey wrap">
     <div class="journey-inner" data-reveal>
       <div>
         <h2>Still learning, in the open</h2>
@@ -111,7 +122,7 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  <section class="cta-section" data-reveal>
+  <section class="sec cta-section wrap" data-reveal>
     <div>
       <h2>Ready to discuss an apprenticeship?</h2>
       <p>Every claim on this site links back to real, inspectable source. Start with <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">github.com/NopsFR</a>.</p>
@@ -136,9 +147,8 @@ const base = import.meta.env.BASE_URL;
 
 <style>
   .hero {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: var(--space-16) var(--space-8) var(--space-12);
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-12);
   }
 
   .eyebrow {
@@ -195,75 +205,58 @@ const base = import.meta.env.BASE_URL;
     color: var(--color-text-primary);
   }
 
-  section {
-    padding: var(--space-12) var(--space-8);
-    max-width: 1400px;
-    margin: 0 auto;
+  .sec {
+    position: relative;
   }
 
-  .flagship,
-  .other-work,
-  .capabilities-section,
-  .journey {
+  .sec + .sec {
     border-top: 1px solid var(--color-border);
   }
 
-  .section-heading {
+  .sec-head {
+    position: relative;
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: var(--space-4);
-    margin-bottom: var(--space-8);
+    gap: var(--space-4) var(--space-8);
     flex-wrap: wrap;
+    padding-bottom: var(--space-6);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
   }
 
-  .section-kicker {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent-interactive);
-    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
-    margin-bottom: var(--space-2);
-  }
-
-  .section-heading h2 {
-    margin: 0;
-    font-size: var(--text-2xl);
-  }
-
-  .view-all {
-    color: var(--color-text-secondary);
-    font-size: var(--text-sm);
-    white-space: nowrap;
-  }
-
-  /* Flagship (NOPS) */
+  /* Flagship (NOPS) — gets its own accent scope via [data-accent] on the section */
   .flagship-card {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(280px, 1fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr);
     gap: 0;
     background: var(--color-bg-raised);
     border: 1px solid var(--color-border-strong);
     border-radius: 1rem;
     overflow: hidden;
     color: inherit;
+    text-decoration: none;
     box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7);
+    transform: perspective(1400px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
     transition:
-      transform var(--transition-fast),
-      border-color var(--transition-safe);
+      transform 0.4s var(--ease-out-expo),
+      border-color var(--transition-safe),
+      box-shadow var(--transition-safe);
+  }
+
+  .flagship-card .sec-rule {
+    display: none;
   }
 
   .flagship-card:hover {
     text-decoration: none;
-    transform: translateY(-2px);
-    border-color: var(--color-accent-secondary);
-    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--color-accent-secondary) 25%, transparent);
+    border-color: var(--page-accent);
+    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--page-accent) 30%, transparent);
   }
 
   .flagship-cover {
     display: block;
+    min-width: 0;
     overflow: hidden;
     background: #000;
     border-right: 1px solid var(--color-border);
@@ -287,6 +280,8 @@ const base = import.meta.env.BASE_URL;
     flex-direction: column;
     gap: var(--space-4);
     padding: var(--space-8);
+    min-width: 0;
+    overflow-wrap: break-word;
   }
 
   .flagship-tagline {

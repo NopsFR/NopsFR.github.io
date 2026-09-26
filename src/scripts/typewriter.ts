@@ -42,5 +42,10 @@ export function mountTypewriter(): void {
     },
     { threshold: 0.4 }
   );
-  targets.forEach((el) => observer.observe(el));
+  const begin = () => targets.forEach((el) => observer.observe(el));
+  if (document.documentElement.classList.contains('pt-incoming')) {
+    window.addEventListener('pt:reveal', () => window.setTimeout(begin, 320), { once: true });
+  } else {
+    window.setTimeout(begin, 250);
+  }
 }

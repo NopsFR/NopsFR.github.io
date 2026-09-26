@@ -4,6 +4,7 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
 import FlowDiagram from '../../components/FlowDiagram.astro';
+import { routeMeta } from '../../data/routes';
 
 export async function getStaticPaths() {
   const allProjects = await getCollection('projects');
@@ -16,13 +17,19 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
+const base = import.meta.env.BASE_URL;
+const meta = routeMeta(`${base}projects/${project.slug}`, base);
 ---
 
-<Layout title={data.title} description={data.description}>
-  <article class="project-detail">
+<Layout title={data.title} description={data.description} accent={meta.accent}>
+  <article class="project-detail wrap">
+    <p class="crumb" data-reveal>
+      <span class="sec-index">Case study</span>
+    </p>
+
     {
       data.cover ? (
-        <div class="cover-banner" data-reveal>
+        <div class="cover-banner" data-reveal data-tilt data-spotlight>
           <img src={data.cover} alt={`${data.title} — product screenshot`} />
         </div>
       ) : (
@@ -66,7 +73,7 @@ const { Content } = await render(project);
 
     {
       data.flow && data.flow.length > 0 && (
-        <section class="flow-section">
+        <section class="flow-section" data-reveal>
           <h2>How it works</h2>
           <FlowDiagram steps={data.flow} />
         </section>
@@ -146,7 +153,7 @@ const { Content } = await render(project);
     </section>
 
     <p class="back-link">
-      <a href={`${import.meta.env.BASE_URL}projects`} data-page-link>← All projects</a>
+      <a href={`${base}projects`} data-page-link class="link-arrow"><span class="arr">←</span> All projects</a>
     </p>
   </article>
 </Layout>
@@ -154,8 +161,12 @@ const { Content } = await render(project);
 <style>
   .project-detail {
     max-width: 800px;
-    margin: 0 auto;
-    padding: var(--space-12) var(--space-8) var(--space-16);
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: var(--space-16);
+  }
+
+  .crumb {
+    margin: 0 0 var(--space-6);
   }
 
   .cover-strip {
@@ -176,6 +187,12 @@ const { Content } = await render(project);
     overflow: hidden;
     background: #000;
     box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+    transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform 0.4s var(--ease-out-expo), border-color var(--transition-safe);
+  }
+
+  .cover-banner:hover {
+    border-color: var(--page-accent);
   }
 
   .cover-banner img {
@@ -202,6 +219,7 @@ const { Content } = await render(project);
 
   .title-row h1 {
     margin: 0;
+    overflow-wrap: break-word;
   }
 
   .project-logo {
@@ -231,7 +249,6 @@ const { Content } = await render(project);
     font-size: var(--text-xs);
     color: var(--color-text-secondary);
   }
-
 
   section {
     margin-top: var(--space-12);
@@ -264,11 +281,11 @@ const { Content } = await render(project);
   .tech-tag {
     display: inline-block;
     padding: var(--space-1) var(--space-4);
-    background: rgba(255, 42, 58, 0.1);
-    border: 1px solid var(--color-accent-interactive);
+    background: color-mix(in srgb, var(--page-accent) 10%, transparent);
+    border: 1px solid var(--page-accent);
     border-radius: 1rem;
     font-size: var(--text-xs);
-    color: var(--color-accent-tag);
+    color: var(--color-text-primary);
   }
 
   .competency-list {
@@ -298,14 +315,15 @@ const { Content } = await render(project);
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-accent-interactive);
+    background: var(--page-accent);
+    box-shadow: 0 0 8px var(--page-accent);
   }
 
   .timeline-date {
     display: block;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-accent-interactive);
+    color: var(--page-accent);
     text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
   }
 
@@ -332,7 +350,7 @@ const { Content } = await render(project);
     margin: 0;
     font-size: var(--text-lg);
     font-family: var(--font-mono);
-    color: var(--color-accent-secondary);
+    color: var(--page-accent);
   }
 
   .content-section :global(h2) {
@@ -342,5 +360,13 @@ const { Content } = await render(project);
 
   .back-link {
     margin-top: var(--space-16);
+  }
+
+  .back-link .link-arrow .arr {
+    order: -1;
+  }
+
+  .back-link .link-arrow:hover .arr {
+    transform: translateX(-4px);
   }
 </style>

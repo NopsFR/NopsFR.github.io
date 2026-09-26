@@ -90,11 +90,35 @@ button:focus-visible,
   text-decoration: none;
   border: 1px solid transparent;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   transition:
     background var(--transition-safe),
     border-color var(--transition-safe),
     box-shadow var(--transition-safe),
-    transform var(--transition-fast);
+    transform var(--transition-fast),
+    translate 0.35s var(--ease-out-expo);
+}
+
+/* Light sweep across the button on hover. */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  transform: translateX(120%);
+}
+
+.btn-outline::after {
+  background: linear-gradient(105deg, transparent 30%, color-mix(in srgb, var(--color-accent-interactive) 22%, transparent) 50%, transparent 70%);
 }
 
 .btn:hover {
@@ -182,7 +206,13 @@ button:focus-visible,
     0 0 32px color-mix(in srgb, currentColor 45%, transparent);
 }
 
-/* Typewriter caret — see src/scripts/typewriter.ts */
+/* Typewriter — see src/scripts/typewriter.ts. Untyped text is hidden only when
+   motion is allowed, so it can't flash in full before being typed. */
+html.motion-ok [data-typewriter]:not([data-typed]) {
+  visibility: hidden;
+}
+
+/* Typewriter caret */
 [data-typewriter].is-typing::after {
   content: '';
   display: inline-block;
@@ -198,6 +228,116 @@ button:focus-visible,
   50% {
     opacity: 0;
   }
+}
+
+/* ---- Layout + section system ---------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sec {
+  position: relative;
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.sec-head {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-6);
+  margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.sec-index {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--page-accent);
+  text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
+}
+
+.sec-index::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.sec-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 2.4vw + 1rem, 2.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.sec-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--page-accent), color-mix(in srgb, var(--page-accent-2) 50%, transparent) 40%, var(--color-border) 70%, transparent);
+}
+
+/* Link with a directional arrow that nudges on hover. */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition-safe);
+}
+
+.link-arrow .arr {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.link-arrow:hover {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.link-arrow:hover .arr {
+  transform: translateX(4px);
+}
+
+/* Mono metadata label (small technical captions). */
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* Scroll progress, in the page accent. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: 2px;
+  background: linear-gradient(90deg, var(--page-accent), var(--page-accent-2));
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
 }
 
 .visually-hidden {

@@ -5,6 +5,7 @@
 // don't already back up.
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 const projects = await getCollection('projects');
 const base = import.meta.env.BASE_URL;
@@ -31,54 +32,58 @@ const periods = [...byPeriod.keys()];
 ---
 
 <Layout title="Learning Log" description="A chronological log of real project milestones, built from each project's own timeline data.">
-  <section class="log-header">
-    <h1>Learning Log</h1>
-    <p>
-      Every entry below comes directly from a project's own timeline data — {entries.length} milestones across
-      {projects.length} projects, in order. Nothing here is a separate narrative; click through to the project for
-      the full picture.
-    </p>
-  </section>
+  <PageHeader index="04" label="Timeline" title="Learning Log">
+    <p>Every entry below comes directly from a project's own timeline data — {entries.length} milestones across {projects.length} projects, in order. Nothing here is a separate narrative; click through to the project for the full picture.</p>
+  </PageHeader>
 
-  <section class="timeline">
-    {
-      periods.map((period) => (
-        <div class="period">
-          <div class="period-label">{period}</div>
-          <ul class="period-entries">
-            {byPeriod.get(period)!.map((e) => (
-              <li>
-                <a href={`${base}projects/${e.slug}`} class="project-tag">
-                  {e.project}
-                </a>
-                <span class="event">{e.event}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
+  <section class="sec wrap timeline">
+    <ol class="rail">
+      {
+        periods.map((period, i) => (
+          <li class="period" data-reveal style={`--i:${i}`}>
+            <span class="period-node" aria-hidden="true" />
+            <div class="period-label">{period}</div>
+            <ul class="period-entries">
+              {byPeriod.get(period)!.map((e) => (
+                <li>
+                  <a href={`${base}projects/${e.slug}`} data-page-link class="project-tag">
+                    {e.project}
+                  </a>
+                  <span class="event">{e.event}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 </Layout>
 
 <style>
-  .log-header {
-    padding: var(--space-12) var(--space-8) var(--space-8);
-    max-width: 800px;
-  }
-
-  .log-header p {
-    color: var(--color-text-secondary);
-    font-size: var(--text-base);
-    line-height: 1.7;
-  }
-
   .timeline {
-    padding: 0 var(--space-8) var(--space-16);
-    max-width: 800px;
+    padding-bottom: var(--space-16);
+  }
+
+  .rail {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 28px;
+  }
+
+  .rail::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(var(--page-accent), color-mix(in srgb, var(--page-accent) 30%, transparent) 60%, transparent);
   }
 
   .period {
+    position: relative;
     display: grid;
     grid-template-columns: 100px 1fr;
     gap: var(--space-6);
@@ -86,10 +91,30 @@ const periods = [...byPeriod.keys()];
     border-top: 1px solid var(--color-border);
   }
 
+  .period:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .period-node {
+    position: absolute;
+    left: -28px;
+    top: calc(var(--space-6) + 5px);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--page-accent);
+    box-shadow: 0 0 10px var(--page-accent);
+  }
+
+  .period:first-child .period-node {
+    top: 5px;
+  }
+
   .period-label {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    color: var(--color-accent-interactive);
+    color: var(--page-accent);
     text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
     font-weight: 600;
   }
@@ -101,6 +126,7 @@ const periods = [...byPeriod.keys()];
     display: flex;
     flex-direction: column;
     gap: var(--space-3, 0.75rem);
+    min-width: 0;
   }
 
   .period-entries li {
@@ -119,16 +145,24 @@ const periods = [...byPeriod.keys()];
     background: var(--color-bg-raised);
     border: 1px solid var(--color-border-strong);
     color: var(--color-text-secondary);
+    text-decoration: none;
   }
 
   .project-tag:hover {
-    border-color: var(--color-accent-interactive);
-    color: var(--color-accent-interactive);
+    border-color: var(--page-accent);
+    color: var(--page-accent);
     text-decoration: none;
   }
 
   .event {
     color: var(--color-text-primary);
     font-size: var(--text-sm);
+  }
+
+  @media (max-width: 560px) {
+    .period {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
   }
 </style>

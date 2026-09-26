@@ -2,138 +2,197 @@
 // src/pages/about.astro
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import Skills from '../components/Skills.astro';
 import Capabilities from '../components/Capabilities.astro';
 
 const projects = await getCollection('projects');
 const base = import.meta.env.BASE_URL;
+
+const notes = [
+  {
+    n: '01',
+    h: 'What I build',
+    body: `I learn by building. Every project on this site started from a real problem or a specific thing I wanted to understand — Discord platforms with real auth and payment flows, a Rust/Tauri desktop app, SaaS backends with Prisma and Stripe, and a Fastify-backed security-training simulator. ${projects.length} projects total, all audited against their own source code rather than described from memory.`,
+    link: { href: `${base}projects`, label: 'Projects' },
+  },
+  {
+    n: '02',
+    h: 'How I got here',
+    body: `I manage an EHCP (Education, Health and Care Plan) accommodation alongside my studies. In practice that means I've had to be deliberate about how I work — breaking problems down, documenting as I go, and building things end-to-end rather than half-finishing them. That shows up in the projects themselves: real error handling, real docs, a real deploy story — not a demo that works once.`,
+  },
+  {
+    n: '03',
+    h: "What I'm looking for",
+    body: `A cybersecurity or IT apprenticeship where I can apply these skills in a professional setting, learn from people who've been doing this longer than I have, and keep building. I'm practising offensive and defensive security fundamentals on TryHackMe alongside the project work.`,
+    link: { href: `${base}credentials`, label: 'Credentials' },
+  },
+];
 ---
 
 <Layout title="About" description="About Oscar — final-year cybersecurity/IT student, DISC, building a hands-on technical portfolio while applying for apprenticeships.">
-  <section class="about-content">
-    <h1 data-reveal>About</h1>
+  <PageHeader index="05" label="Personal" title="About">
+    <p>I'm a final-year student at DISC, specialising in cybersecurity and IT, and I'm looking for a paid cybersecurity apprenticeship, IT apprenticeship, or junior technical role.</p>
+  </PageHeader>
 
-    <div class="lede" data-reveal>
-      <p>
-        I'm a final-year student at DISC, specialising in cybersecurity and IT, and I'm looking for a paid
-        cybersecurity apprenticeship, IT apprenticeship, or junior technical role.
-      </p>
+  <section class="sec notes wrap">
+    {
+      notes.map((note) => (
+        <article class="note" data-reveal>
+          <span class="note-n">{note.n}</span>
+          <div class="note-body">
+            <h2>{note.h}</h2>
+            <p>{note.body}</p>
+            {note.link && (
+              <a href={note.link.href} data-page-link class="link-arrow">
+                {note.link.label}
+                <span class="arr">→</span>
+              </a>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="sec wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <p class="sec-index">06</p>
+        <h2 class="sec-title">Technical capabilities</h2>
+      </div>
+      <span class="meta">Grouped by what each decision demonstrates</span>
+      <span class="sec-rule" aria-hidden="true"></span>
     </div>
-
-    <h2>What I build</h2>
-    <p>
-      I learn by building. Every project on this site started from a real problem or a specific thing I wanted to
-      understand — Discord platforms with real auth and payment flows, a Rust/Tauri desktop app, SaaS backends with
-      Prisma and Stripe, and a Fastify-backed security-training simulator. {projects.length} projects total, all
-      audited against their own source code rather than described from memory — see <a href={`${base}projects`}>Projects</a>.
-    </p>
-
-    <h2>How I got here</h2>
-    <p>
-      I manage an EHCP (Education, Health and Care Plan) accommodation alongside my studies. In practice that means
-      I've had to be deliberate about how I work — breaking problems down, documenting as I go, and building things
-      end-to-end rather than half-finishing them. I think that shows up in the projects themselves: most of what's
-      here has real error handling, real docs, and a real deploy story, not just a demo that works once.
-    </p>
-
-    <h2>What I'm looking for</h2>
-    <p>
-      A cybersecurity or IT apprenticeship where I can apply these skills in a professional setting, learn from
-      people who've been doing this longer than I have, and keep building. I'm practising offensive and defensive
-      security fundamentals on TryHackMe alongside the project work — see <a href={`${base}credentials`}>Credentials</a>.
-    </p>
-
-    <h2>Technical capabilities</h2>
-    <p class="skills-note">
-      Grouped by what each technology or decision actually demonstrates, not a frequency count — every line links to
-      the specific project it comes from.
-    </p>
     <Capabilities />
+  </section>
 
-    <h2>Skills breakdown</h2>
-    <p class="skills-note">
-      Computed from the technologies actually used across the {projects.length} projects on this site — not a
-      hand-written list, so it can't drift out of date.
-    </p>
+  <section class="sec wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <p class="sec-index">07</p>
+        <h2 class="sec-title">Skills breakdown</h2>
+      </div>
+      <span class="meta">Computed from {projects.length} projects — never hand-typed</span>
+      <span class="sec-rule" aria-hidden="true"></span>
+    </div>
     <Skills />
+  </section>
 
-    <h2>Contact</h2>
-    <ul class="contact-list">
-      <li><span>Email</span> <a href="mailto:nopsrust@gmail.com">nopsrust@gmail.com</a></li>
-      <li><span>GitHub</span> <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">github.com/NopsFR</a></li>
-      <li><span>TryHackMe</span> <a href="https://tryhackme.com/p/Oscar.Senior" target="_blank" rel="noopener noreferrer">tryhackme.com/p/Oscar.Senior</a></li>
-    </ul>
-    <p class="cta-line">Interested in an apprentice or junior hire? <a href="mailto:nopsrust@gmail.com">Let's talk</a>.</p>
+  <section class="sec contact-sec wrap" data-reveal>
+    <div class="contact-inner">
+      <div>
+        <p class="sec-index">08</p>
+        <h2 class="sec-title">Contact</h2>
+        <p class="cta-line">Interested in an apprentice or junior hire? <a href="mailto:nopsrust@gmail.com">Let's talk</a>.</p>
+      </div>
+      <ul class="contact-list">
+        <li><span>Email</span> <a href="mailto:nopsrust@gmail.com">nopsrust@gmail.com</a></li>
+        <li><span>GitHub</span> <a href="https://github.com/NopsFR" target="_blank" rel="noopener noreferrer">github.com/NopsFR</a></li>
+        <li><span>TryHackMe</span> <a href="https://tryhackme.com/p/Oscar.Senior" target="_blank" rel="noopener noreferrer">tryhackme.com/p/Oscar.Senior</a></li>
+      </ul>
+    </div>
   </section>
 </Layout>
 
 <style>
-  .about-content {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: var(--space-16) var(--space-8) var(--space-24, 6rem);
+  .notes {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
   }
 
-  .lede p {
+  .note {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .note:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .note-n {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--page-accent);
+    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
+  }
+
+  .note-body {
+    min-width: 0;
+  }
+
+  .note-body h2 {
+    margin: 0 0 var(--space-3);
     font-size: var(--text-xl);
-    color: var(--color-text-primary);
-    line-height: 1.6;
   }
 
-  h2 {
-    margin-top: var(--space-12);
-    margin-bottom: var(--space-4);
-    font-size: var(--text-xl);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-8);
-  }
-
-  .about-content p {
+  .note-body p {
+    margin: 0 0 var(--space-3);
+    max-width: 62ch;
     color: var(--color-text-secondary);
     font-size: var(--text-base);
     line-height: 1.75;
   }
 
-  .about-content p a {
-    color: var(--color-accent-interactive);
-    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
+  @media (max-width: 640px) {
+    .note {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
   }
 
-  .skills-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-tertiary);
-    margin-bottom: var(--space-6);
+  .contact-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .cta-line {
+    margin-top: var(--space-4);
+    font-size: var(--text-lg);
+    color: var(--color-text-primary);
+  }
+
+  .cta-line a {
+    text-shadow: 0 0 1px var(--color-bg), 0 1px 4px var(--color-bg), 0 0 14px var(--color-bg);
   }
 
   .contact-list {
     list-style: none;
-    padding: 0;
+    padding: var(--space-6);
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
   }
 
   .contact-list li {
     display: flex;
-    gap: var(--space-4);
+    flex-direction: column;
+    gap: 0.2rem;
     font-size: var(--text-sm);
   }
 
   .contact-list span {
-    width: 100px;
-    flex-shrink: 0;
     color: var(--color-text-tertiary);
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding-top: 0.15rem;
+    letter-spacing: 0.08em;
   }
 
-  .cta-line {
-    margin-top: var(--space-6);
-    font-size: var(--text-lg);
-    color: var(--color-text-primary);
+  @media (max-width: 720px) {
+    .contact-inner {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

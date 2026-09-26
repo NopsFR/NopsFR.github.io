@@ -74,6 +74,47 @@
   --z-modal: 1000;
 }
 
+/* Page accent system — each route carries its own accent (set as data-accent on
+   <html> by Layout from src/data/routes.ts). It drives the nav indicator,
+   page identity labels, section rules, background lighting and the page
+   transition. Links/CTAs keep the red interactive colour everywhere. */
+:root,
+[data-accent='red'] {
+  --page-accent: var(--color-accent-interactive);
+  --page-accent-2: var(--color-accent-secondary);
+  --page-accent-3: var(--color-accent-gold);
+}
+[data-accent='cyan'] {
+  --page-accent: var(--color-accent-secondary);
+  --page-accent-2: var(--color-accent-blue);
+  --page-accent-3: var(--color-accent-magenta);
+}
+[data-accent='blue'] {
+  --page-accent: var(--color-accent-blue);
+  --page-accent-2: var(--color-accent-secondary);
+  --page-accent-3: var(--color-accent-interactive);
+}
+[data-accent='gold'] {
+  --page-accent: var(--color-accent-gold);
+  --page-accent-2: var(--color-accent-interactive);
+  --page-accent-3: var(--color-accent-magenta);
+}
+[data-accent='green'] {
+  --page-accent: var(--color-accent-green);
+  --page-accent-2: var(--color-accent-secondary);
+  --page-accent-3: var(--color-accent-blue);
+}
+[data-accent='magenta'] {
+  --page-accent: var(--color-accent-magenta);
+  --page-accent-2: var(--color-accent-blue);
+  --page-accent-3: var(--color-accent-gold);
+}
+
+:root {
+  --content-max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+}
+
 /* Light mode — opt-in via data-theme="light" on <html> (see ThemeToggle) */
 :root[data-theme='light'] {
   color-scheme: light;

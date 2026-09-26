@@ -9,18 +9,21 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AtmosphericBackground from '../components/AtmosphericBackground.astro';
 import PageTransition from '../components/PageTransition.astro';
+import { routeMeta, type Accent } from '../data/routes';
 
 interface Props {
   title: string;
   description?: string;
+  accent?: Accent;
 }
 
-const { title, description } = Astro.props;
+const { title, description, accent } = Astro.props;
 const site = 'Oscar Portfolio';
+const pageAccent = accent ?? routeMeta(Astro.url.pathname, import.meta.env.BASE_URL).accent;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-accent={pageAccent}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,24 +31,42 @@ const site = 'Oscar Portfolio';
     <title>{title} — {site}</title>
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <link rel="canonical" href={Astro.url} />
-    <meta name="theme-color" content="#0B0B0D" />
+    <meta name="theme-color" content="#08090B" />
     <script is:inline>
-      // Runs before paint to avoid a flash of the wrong theme.
+      // Runs before paint: theme, then — if we arrived through the page
+      // transition — start the page already covered, with the destination's
+      // label painted by CSS (see PageTransition.astro).
       (function () {
+        var h = document.documentElement;
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('motion-ok');
         try {
-          const stored = localStorage.getItem('theme');
-          const theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-          if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+          var stored = localStorage.getItem('theme');
+          var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          if (theme === 'light') h.setAttribute('data-theme', 'light');
+        } catch (e) {}
+        try {
+          var raw = sessionStorage.getItem('pt');
+          if (raw) {
+            sessionStorage.removeItem('pt');
+            var d = JSON.parse(raw);
+            if (Date.now() - d.t < 4000 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              h.classList.add('pt-incoming');
+              h.style.setProperty('--pt-title', JSON.stringify(d.label));
+              h.style.setProperty('--pt-index', JSON.stringify(d.index));
+              h.style.setProperty('--pt-path', JSON.stringify(d.path));
+            }
+          }
         } catch (e) {}
       })();
     </script>
   </head>
   <body>
     <AtmosphericBackground />
+    <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
     <div class="app-shell">
       <Header />
       <div class="app-content">
-        <main>
+        <main id="main">
           <slot />
         </main>
         <Footer />
@@ -54,10 +75,10 @@ const site = 'Oscar Portfolio';
     <PageTransition />
     <script>
       import { mountReveal } from '../scripts/reveal';
-      import { mountSpotlight } from '../scripts/spotlight';
+      import { mountInteractions } from '../scripts/interactions';
       import { mountTypewriter } from '../scripts/typewriter';
       mountReveal();
-      mountSpotlight();
+      mountInteractions();
       mountTypewriter();
     </script>
   </body>
@@ -84,6 +105,7 @@ const site = 'Oscar Portfolio';
 
   .app-content main {
     flex: 1;
+    min-width: 0;
   }
 
   @media (max-width: 860px) {
