@@ -7,7 +7,7 @@ status: "Active"
 year: 2026
 featured: true
 order: -1
-cover: "/images/projects/mindhouse.svg"
+cover: "/images/projects/mindhouse.png"
 flow:
   - "User message"
   - "Intent reasoning"
