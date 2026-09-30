@@ -9,8 +9,11 @@
 //     relative to the smaller of its own height and the viewport's, so tall
 //     portrait clips on short screens still qualify. A clip becomes active at
 //     ≥ ENTER coverage, but only after scrolling settles (so skimming past
-//     clips never starts them), and stays active until it drops below EXIT —
-//     the gap stops flicker at the viewport edge. Leaving pauses immediately.
+//     clips never starts them). When several qualify, the one nearest the
+//     middle of the screen wins. The current clip stays active until it drops
+//     below EXIT (the gap stops flicker at the viewport edge) or another is
+//     clearly nearer the middle — unless the visitor started it themselves.
+//     Leaving pauses immediately.
 //   - Autoplay: the active clip plays muted, unless the visitor paused it
 //     themselves (that sticks until they press play again) or prefers
 //     reduced motion (then nothing starts on its own).
@@ -25,6 +28,7 @@
 const ENTER = 0.6;
 const EXIT = 0.3;
 const SETTLE_MS = 160;
+const SWITCH_MARGIN = 0.2; // of viewport height
 const DEFAULT_VOLUME = 0.8;
 
 type State = 'idle' | 'loading' | 'playing' | 'paused' | 'blocked' | 'error';
@@ -85,6 +89,7 @@ export function mountVideoGallery(): void {
   let soundOn = false;
   let volume = DEFAULT_VOLUME;
   let active: Clip | null = null;
+  let userChosen: Clip | null = null; // started by the visitor; scrolling won't steal it while visible
   let token = 0;
   let settleTimer = 0;
   let resumeAfterHidden = false;
@@ -188,6 +193,7 @@ export function mountVideoGallery(): void {
     c.root.removeAttribute('data-active');
     halt(c);
     if (active === c) active = null;
+    if (userChosen === c) userChosen = null;
   };
 
   const activate = (c: Clip) => {
@@ -197,13 +203,32 @@ export function mountVideoGallery(): void {
     c.root.setAttribute('data-active', '');
   };
 
+  // Observer entries only arrive at threshold crossings, so a clip sitting
+  // fully on screen keeps stale geometry while the page scrolls. Re-measure
+  // the on-screen clips directly when it's time to decide.
+  const measure = (c: Clip) => {
+    const r = c.root.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const visible = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+    c.coverage = r.height > 0 ? visible / Math.min(r.height, vh) : 0;
+    c.centerOffset = Math.abs(r.top + r.height / 2 - vh / 2);
+  };
+
   const choose = () => {
     if (document.hidden) return;
-    if (active && active.coverage >= EXIT) return; // keep — hysteresis
+    clips.forEach((c) => c.coverage > 0 && measure(c));
+    if (active && active.coverage < EXIT) deactivate(active);
     const best = clips
       .filter((c) => !c.failed && c.coverage >= ENTER)
-      .sort((a, b) => b.coverage - a.coverage || a.centerOffset - b.centerOffset)[0];
-    if (!best) return;
+      .sort((a, b) => a.centerOffset - b.centerOffset || b.coverage - a.coverage)[0];
+    if (!best || best === active) return;
+    if (active) {
+      // Keep the current clip while it's still reasonably on screen, unless
+      // another is clearly nearer the middle — and never take over from a
+      // clip the visitor started themselves.
+      if (userChosen === active) return;
+      if (best.centerOffset > active.centerOffset - window.innerHeight * SWITCH_MARGIN) return;
+    }
     activate(best);
     if (!best.manualPaused && !reduced) play(best);
   };
@@ -253,6 +278,7 @@ export function mountVideoGallery(): void {
     }
     c.manualPaused = false;
     activate(c);
+    userChosen = c;
     play(c);
   };
 
@@ -301,6 +327,7 @@ export function mountVideoGallery(): void {
         v.muted = false; // inside the click, so the browser allows it
         if (v.paused && !c.manualPaused) {
           activate(c);
+          userChosen = c;
           play(c);
         }
       } else {
@@ -327,6 +354,10 @@ export function mountVideoGallery(): void {
     viewObserver.observe(c.root);
   });
   syncVolumeSliders();
+
+  // Clips that stay fully on screen produce no observer entries while the
+  // page moves, so re-decide whenever scrolling comes to rest.
+  window.addEventListener('scroll', settle, { passive: true });
 
   // ---- Page lifecycle -----------------------------------------------------
   document.addEventListener('visibilitychange', () => {

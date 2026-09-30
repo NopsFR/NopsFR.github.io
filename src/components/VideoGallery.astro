@@ -9,7 +9,10 @@
 import { clips } from '../data/inspiration';
 
 const base = import.meta.env.BASE_URL;
-const columns = [0, 1].map((c) => clips.map((clip, i) => ({ ...clip, n: String(i + 1).padStart(2, '0') })).filter((clip) => clip.column === c));
+// Numbered in reading order: down the left column, then the right.
+const ordered = [0, 1].flatMap((c) => clips.filter((clip) => clip.column === c));
+const numbered = ordered.map((clip, i) => ({ ...clip, n: String(i + 1).padStart(2, '0') }));
+const columns = [0, 1].map((c) => numbered.filter((clip) => clip.column === c));
 ---
 
 <div class="gallery" data-gallery>
