@@ -1,0 +1,398 @@
+---
+// src/components/VideoGallery.astro
+// "Inspired by" — other creators' clips, hosted locally and credited. Two
+// staggered columns on desktop (clips keep their native aspect ratio, so
+// portrait, landscape and widescreen sit together), one column on mobile.
+// Playback is driven by src/scripts/video-gallery.ts: nothing is fetched
+// until a clip nears the viewport, only one clip plays at a time, and sound
+// stays off until the visitor turns it on.
+import { clips } from '../data/inspiration';
+
+const base = import.meta.env.BASE_URL;
+const columns = [0, 1].map((c) => clips.map((clip, i) => ({ ...clip, n: String(i + 1).padStart(2, '0') })).filter((clip) => clip.column === c));
+---
+
+<div class="gallery" data-gallery>
+  {
+    columns.map((col, c) => (
+      <div class:list={['gallery-col', { 'gallery-col--offset': c === 1 }]}>
+        {col.map((clip) => {
+          const label = `${clip.title} by @${clip.creator}`;
+          return (
+            <figure class="clip" data-clip data-state="idle" data-label={label} style={`--ar: ${clip.width} / ${clip.height}; --ar-n: ${clip.width / clip.height};`} data-reveal>
+              <div class="clip-frame">
+                <video
+                  class="clip-video"
+                  data-src={`${base}videos/${clip.slug}.mp4`}
+                  data-poster={`${base}videos/posters/${clip.slug}.jpg`}
+                  width={clip.width}
+                  height={clip.height}
+                  preload="none"
+                  muted
+                  loop
+                  playsinline
+                  disableRemotePlayback
+                  aria-label={label}
+                />
+                <div class="clip-surface" data-surface aria-hidden="true">
+                  <span class="clip-bigplay">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+                  </span>
+                  <span class="clip-spinner" />
+                </div>
+                <p class="clip-error" data-error hidden>Couldn't load this clip.</p>
+              </div>
+
+              <figcaption class="clip-bar">
+                <div class="clip-controls">
+                  <button type="button" class="clip-btn" data-play aria-label={`Play ${label}`}>
+                    <svg class="icon i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+                    <svg class="icon i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>
+                  </button>
+                  <button type="button" class="clip-btn clip-btn--sound" data-sound aria-pressed="false" aria-label={`Sound for ${label}`}>
+                    <svg class="icon i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 9.5l5 5M21 9.5l-5 5" /></svg>
+                    <svg class="icon i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 9a4.5 4.5 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" /></svg>
+                    <span class="clip-sound-text" data-sound-text>Sound off</span>
+                  </button>
+                  <input class="clip-volume" data-volume type="range" min="0" max="1" step="0.05" value="0.8" aria-label={`Volume for ${label}`} />
+                </div>
+                <div class="clip-meta">
+                  <p class="clip-title"><span class="clip-n">{clip.n}</span>{clip.title}</p>
+                  <p class="clip-credit">@{clip.creator} <span aria-hidden="true">·</span> TikTok</p>
+                </div>
+                <p class="clip-status" data-status aria-hidden="true">Paused</p>
+              </figcaption>
+            </figure>
+          );
+        })}
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  import { mountVideoGallery } from '../scripts/video-gallery';
+  mountVideoGallery();
+</script>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+
+  .gallery-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 4vw, 3.25rem);
+    min-width: 0;
+  }
+
+  .gallery-col--offset {
+    margin-top: clamp(2rem, 7vw, 6rem);
+  }
+
+  @media (max-width: 720px) {
+    .gallery {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .gallery-col--offset {
+      margin-top: 0;
+    }
+  }
+
+  .clip {
+    margin: 0;
+    /* Tall clips are capped so a whole portrait video fits on screen. */
+    width: min(100%, calc(78vh * var(--ar-n)));
+    width: min(100%, calc(78svh * var(--ar-n)));
+    margin-inline: auto;
+  }
+
+  .clip-frame {
+    position: relative;
+    aspect-ratio: var(--ar);
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    background:
+      radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--page-accent) 7%, transparent), transparent 60%),
+      #0c0d10;
+    transition: border-color var(--transition-safe), box-shadow var(--transition-safe);
+  }
+
+  .clip[data-active] .clip-frame {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 24px 60px -30px color-mix(in srgb, var(--page-accent) 45%, transparent);
+  }
+
+  .clip-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Whole-frame tap target for play/pause (pointer only — the labelled
+     button below is the keyboard/AT control). */
+  .clip-surface {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .clip-bigplay {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    color: #f1efe8;
+    background: rgba(8, 9, 11, 0.62);
+    border: 1px solid rgba(241, 239, 232, 0.18);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    scale: 0.9;
+    transition: opacity var(--transition-safe), scale var(--transition-safe);
+  }
+
+  .clip-bigplay .icon {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: currentColor;
+    stroke: none;
+    translate: 2px 0;
+  }
+
+  /* Shown whenever the clip is paused and not loading, so there's always an
+     obvious way back in — especially after the visitor paused it themselves. */
+  .clip:is([data-state='paused'], [data-state='idle'], [data-state='blocked']) .clip-bigplay {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .clip:is([data-state='paused'], [data-state='blocked']) .clip-video {
+    filter: brightness(0.78);
+  }
+
+  .clip-spinner {
+    position: absolute;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    border: 2px solid rgba(241, 239, 232, 0.2);
+    border-top-color: #f1efe8;
+    opacity: 0;
+    transition: opacity var(--transition-safe);
+    animation: clip-spin 0.9s linear infinite;
+  }
+
+  .clip[data-state='loading'] .clip-spinner {
+    opacity: 1;
+    transition-delay: 0.25s; /* don't flash for fast starts */
+  }
+
+  @keyframes clip-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  .clip-error {
+    position: absolute;
+    inset: auto 0 0;
+    margin: 0;
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: #f1efe8;
+    background: rgba(8, 9, 11, 0.8);
+  }
+
+  .clip[data-state='error'] .clip-surface {
+    display: none;
+  }
+
+  /* ---- Control bar + caption ----------------------------------------- */
+  .clip-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'controls status'
+      'meta meta';
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    padding-top: var(--space-3);
+  }
+
+  .clip-controls {
+    grid-area: controls;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .clip-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.7rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-bg-raised);
+    color: var(--color-text-primary);
+    font: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: border-color var(--transition-safe), background var(--transition-safe), color var(--transition-safe);
+  }
+
+  .clip-btn:hover {
+    border-color: color-mix(in srgb, var(--page-accent) 60%, var(--color-border-strong));
+  }
+
+  .clip-btn .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .clip-btn .i-play {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .clip-btn .i-pause,
+  .clip-btn .i-sound,
+  .clip[data-busy] .clip-btn .i-play,
+  .clip-btn--sound[aria-pressed='true'] .i-muted {
+    display: none;
+  }
+
+  .clip[data-busy] .clip-btn .i-pause,
+  .clip-btn--sound[aria-pressed='true'] .i-sound {
+    display: block;
+  }
+
+  .clip-btn--sound {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .clip-btn--sound[aria-pressed='true'] {
+    color: var(--color-text-primary);
+    border-color: color-mix(in srgb, var(--page-accent) 55%, var(--color-border-strong));
+    background: color-mix(in srgb, var(--page-accent) 10%, var(--color-bg-raised));
+  }
+
+  /* Browser refused sound without a fresh tap — say so plainly. */
+  .clip[data-sound-blocked] .clip-btn--sound {
+    color: var(--page-accent);
+    border-color: color-mix(in srgb, var(--page-accent) 55%, var(--color-border-strong));
+  }
+
+  .clip-volume {
+    flex: 0 1 6.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    margin: 0;
+    accent-color: var(--page-accent);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  /* iOS ignores media volume (hardware buttons only), so the slider is hidden
+     where it would do nothing. */
+  .gallery[data-no-volume] .clip-volume {
+    display: none;
+  }
+
+  .clip-status {
+    grid-area: status;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .clip-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-text-tertiary);
+    opacity: 0.6;
+  }
+
+  .clip[data-state='playing'] .clip-status {
+    color: var(--color-text-secondary);
+  }
+
+  .clip[data-state='playing'] .clip-status::before {
+    background: var(--page-accent);
+    opacity: 1;
+    box-shadow: 0 0 8px var(--page-accent);
+  }
+
+  .clip-meta {
+    grid-area: meta;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25rem var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    min-width: 0;
+  }
+
+  .clip-title {
+    margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+  }
+
+  .clip-n {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--page-accent);
+  }
+
+  .clip-credit {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 380px) {
+    .clip-sound-text {
+      display: none;
+    }
+  }
+</style>

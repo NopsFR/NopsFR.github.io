@@ -5,6 +5,7 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Skills from '../components/Skills.astro';
 import Capabilities from '../components/Capabilities.astro';
+import VideoGallery from '../components/VideoGallery.astro';
 
 const projects = await getCollection('projects');
 const base = import.meta.env.BASE_URL;
@@ -72,6 +73,15 @@ const notes = [
       <p>My sense of humour is probably the most "me" thing about me, and it's a bit unhinged. I find an unreasonable amount of joy in ideas that are completely pointless but committed — the kind of thing where someone asks a normal question and I answer it in the most technically-correct, least-intended way possible. Ask me to bring back a band for one final show and I'm not booking a venue, I'm teleporting them into my bedroom. I enjoy that gap between what a question means and what it actually says, and I live in it more than is probably healthy. I'll also just go along with a stupid idea way further than it deserves, purely because stopping would be boring.</p>
       <p>I'm not one thing consistently, either. I can go quiet for a while and then not shut up the second you get me on something I care about. I get excited fast and fully, I'm sentimental about specific small stuff — Camp Bestival as a kid, push-up ice creams, songs that pull me straight back to a moment — even if I don't always say that out loud. I care a lot about the people I let in, more than I probably show day to day.</p>
       <p>I'm not trying to be the most impressive person you've read about today. I just like understanding things, laughing at ideas that don't need to exist, and building stuff because I want to see if I can. That's genuinely most of it — the rest of this site is what I've made. This part's just me.</p>
+    </div>
+
+    <div class="inspired">
+      <div class="inspired-head" data-reveal>
+        <h3>Inspired by</h3>
+        <p>Clips from other creators that I'm into — none of these are mine. Each one is credited to the person who made it.</p>
+        <p class="meta">Sound is off until you turn it on</p>
+      </div>
+      <VideoGallery />
     </div>
   </section>
 
@@ -183,6 +193,33 @@ const notes = [
   .personal-copy p:first-child {
     color: var(--color-text-primary);
     font-size: var(--text-lg);
+  }
+
+  .inspired {
+    margin-top: clamp(3rem, 7vw, 5.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .inspired-head {
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  .inspired-head h3 {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-2xl);
+    letter-spacing: -0.015em;
+  }
+
+  .inspired-head p {
+    margin: 0;
+    max-width: 58ch;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .inspired-head .meta {
+    margin-top: var(--space-3);
   }
 
   .contact-inner {
